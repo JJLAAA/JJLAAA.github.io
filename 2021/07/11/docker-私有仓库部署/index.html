@@ -28,7 +28,7 @@
 <meta property="og:description" content="Docker私有仓库部署0 需求 构建Docker私有仓库可避免开发生产时可能产生的网络问题；  使用Docker Registry私有仓库部署，使用Docker Auth做身份验证  考虑到使用场景：发布镜像一般需要认证，拉取镜像则不需要，不同环境也需要不同的访问策略。简单的http验证扩展能力受限，docker_auth提供了基于token的docker registry验证实现方式，可以更好">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-07-11T08:36:49.000Z">
-<meta property="article:modified_time" content="2021-07-11T08:37:15.613Z">
+<meta property="article:modified_time" content="2021-07-11T08:40:58.769Z">
 <meta property="article:author" content="Leo">
 <meta property="article:tag" content="docker registry">
 <meta name="twitter:card" content="summary">
@@ -190,7 +190,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-07-11 16:36:49 / Modified: 16:37:15" itemprop="dateCreated datePublished" datetime="2021-07-11T16:36:49+08:00">2021-07-11</time>
+              <time title="Created: 2021-07-11 16:36:49 / Modified: 16:40:58" itemprop="dateCreated datePublished" datetime="2021-07-11T16:36:49+08:00">2021-07-11</time>
             </span>
 
           
@@ -218,6 +218,8 @@
 </li>
 </ul>
 <p>本文经过作者亲自验证，如果读者实践时出错，欢迎在评论区指出</p>
+<span id="more"></span>
+
 <h2 id="1-Docker安装"><a href="#1-Docker安装" class="headerlink" title="1. Docker安装"></a>1. Docker安装</h2><h2 id="1-1-清除旧Docker安装痕迹"><a href="#1-1-清除旧Docker安装痕迹" class="headerlink" title="1.1 清除旧Docker安装痕迹"></a>1.1 清除旧Docker安装痕迹</h2><p><strong>如果是第一次安装，可以略过此步骤</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove docker docker-engine docker.io containerd runc</span><br><span class="line"></span><br><span class="line">sudo apt-get purge docker-ce docker-ce-cli containerd.io</span><br><span class="line">sudo rm -rf /var/lib/docker</span><br></pre></td></tr></table></figure>
 

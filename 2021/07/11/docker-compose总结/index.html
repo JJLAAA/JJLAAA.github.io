@@ -28,7 +28,7 @@
 <meta property="og:description" content="什么是Docker Compose 一个应用往往由多个容器组合构成，分别管理过于繁琐，在单机、容器数量比较多的情况下，应该使用Docker Compose进行容器编排组织 Docker Compose是一个用来定义和运行复杂应用的Docker工具（在单机进行编排） Docker Compose 通过一个配置文件来管理多个Docker容器，在配置文件中，所有的容器通过services来定义，然后使用">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-07-11T08:36:14.000Z">
-<meta property="article:modified_time" content="2021-07-11T08:36:29.075Z">
+<meta property="article:modified_time" content="2021-07-11T08:40:50.902Z">
 <meta property="article:author" content="Leo">
 <meta property="article:tag" content="docker-compose">
 <meta name="twitter:card" content="summary">
@@ -190,7 +190,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-07-11 16:36:14 / Modified: 16:36:29" itemprop="dateCreated datePublished" datetime="2021-07-11T16:36:14+08:00">2021-07-11</time>
+              <time title="Created: 2021-07-11 16:36:14 / Modified: 16:40:50" itemprop="dateCreated datePublished" datetime="2021-07-11T16:36:14+08:00">2021-07-11</time>
             </span>
 
           
@@ -217,6 +217,8 @@
 <li>缓存配置，如果更改了部分配置，其余未更改的配置对应的容器不会重建</li>
 <li>yaml配置文件可以使用占位符提升自由度，可以将公共部分提取到单独的yaml文件，并被其他yaml文件引用，可以同时指定多个配置文件组合以适应不同的构建环境</li>
 </ul>
+<span id="more"></span>
+
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>docker-compose安装可以参考官方文档：<a target="_blank" rel="noopener" href="https://docs.docker.com/compose/install/">Install Docker Compose</a>，安装方法很简单，不再赘述</p>
 <h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><ul>
 <li><strong>单独说明Linux环境下，自己比较喜欢使用独立脚本的安装方式</strong></li>
