@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Vue学习 Vue编码风格指南  Vue引入 Vue是什么？   基于js的前端框架 提供交互式的响应式的前端应用（就和手机App一样） 如何理解所谓的交互式与响应式呢？还是以手机App为例，与传统的网页不同，APP内充斥着丰富的交互操作，并且所有的页面与响应都无需等待加载（所有的页面都是只需要一次下载，后续没有任何界面的传输需要，只有数据的传输需要），而在传统web中，总是在等待着新的HTML界">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue学习笔记">
+<meta property="og:url" content="http://example.com/2021/07/11/vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Vue学习 Vue编码风格指南  Vue引入 Vue是什么？   基于js的前端框架 提供交互式的响应式的前端应用（就和手机App一样） 如何理解所谓的交互式与响应式呢？还是以手机App为例，与传统的网页不同，APP内充斥着丰富的交互操作，并且所有的页面与响应都无需等待加载（所有的页面都是只需要一次下载，后续没有任何界面的传输需要，只有数据的传输需要），而在传统web中，总是在等待着新的HTML界">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210107205128265.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210107210923080.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210107211102523.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210107215857364.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210119205230894.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210119205856115.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210119211810400.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210120230506460.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210122135930043.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210122144423784.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210122144423784.png">
+<meta property="article:published_time" content="2021-07-11T07:04:30.000Z">
+<meta property="article:modified_time" content="2021-07-11T07:05:02.121Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.demoli.xyz/image-20210107205128265.png">
+
+<link rel="canonical" href="http://example.com/2021/07/11/vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>vue学习笔记 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vue学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-07-11 15:04:30 / Modified: 15:05:02" itemprop="dateCreated datePublished" datetime="2021-07-11T15:04:30+08:00">2021-07-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Vue学习"><a href="#Vue学习" class="headerlink" title="Vue学习"></a>Vue学习</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/style-guide/index.htm">Vue编码风格指南</a></li>
+</ul>
+<h2 id="Vue引入"><a href="#Vue引入" class="headerlink" title="Vue引入"></a>Vue引入</h2><ul>
+<li><p>Vue是什么？</p>
+<p><img src="http://images.demoli.xyz/image-20210107205128265.png" alt="image-20210107205128265"></p>
+<ul>
+<li>基于js的前端框架</li>
+<li>提供交互式的响应式的前端应用（就和手机App一样）<ul>
+<li>如何理解所谓的交互式与响应式呢？还是以手机App为例，与传统的网页不同，APP内充斥着丰富的交互操作，并且所有的页面与响应都无需等待加载（所有的页面都是只需要一次下载，后续没有任何界面的传输需要，只有数据的传输需要），而在传统web中，总是在等待着新的HTML界面下载得到新的界面</li>
+<li>html中运行在浏览器的js可以改变这一现状，因为其可以更改dom，又可以发出HTTP请求来获取数据，也许这样，只需要一个页面（或者更少的界面），能做的事情就会很多，不用再等待界面HTML 的下载了</li>
+<li>但是仅仅用js是一个巨大的工程，因此需要框架引入</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>两种使用Vue的场景</p>
+<p><img src="http://images.demoli.xyz/image-20210107210923080.png" alt="image-20210107210923080"></p>
+<ul>
+<li><p>页面的一部分使用Vue构建，使其更加具有交互式与响应式的特定，比如页面聊天框，比如：</p>
+<img src="http://images.demoli.xyz/image-20210107211102523.png" alt="image-20210107211102523" style="zoom:80%;" /></li>
+<li><p>构建SPA（单页应用），服务器端只需要提供一次HTML界面，剩下的显式效果完全有HTML中包含的Vue代码操纵，后端只需要进行纯数据交互即可</p>
+</li>
+</ul>
+</li>
+<li><p>常用的三大前端框架</p>
+<img src="http://images.demoli.xyz/image-20210107215857364.png" alt="image-20210107215857364" style="zoom:80%;" />
+
+<ul>
+<li>Angular 事无巨细，拥有丰富的组件选型，使用ts构建，项目组织严格分层，类型清晰，像是后端框架一样</li>
+<li>React 轻薄，由社区提供众多的第三方功能</li>
+<li>Vue 使用友好，功能复杂程度应该介于React与Angualr之间</li>
+</ul>
+</li>
+</ul>
+<h2 id="第一个Demo项目"><a href="#第一个Demo项目" class="headerlink" title="第一个Demo项目"></a>第一个Demo项目</h2><h3 id="使用纯JS完成"><a href="#使用纯JS完成" class="headerlink" title="使用纯JS完成"></a>使用纯JS完成</h3><ul>
+<li>查看demo1项目的js-vue项目</li>
+</ul>
+<h3 id="使用Vue完成"><a href="#使用Vue完成" class="headerlink" title="使用Vue完成"></a>使用Vue完成</h3><ul>
+<li><p>区别在于，使用纯js的时候，所有的对于DOM的操作与Data的操作是混合的，在Vue中，只需要声明Data，具体的Dom操作由Vue完成</p>
+</li>
+<li><p>Vue声明预期的DOM结构，具体的实现由Vue负责</p>
+<ul>
+<li><strong>声明式的开发是一个趋势</strong></li>
+<li>所谓声明式就是声明好自己要渲染的数据位置，自己想要时间发生时要回调的函数，etc, 具体的操作由框架完成（针对vue来说）</li>
+</ul>
+</li>
+<li><p><strong>自己实现了Vue3下的ts开发，但是没有使用webpack</strong></p>
+<ul>
+<li><p>```bash</p>
+<h1 id="1-Install-Vue-CLI-如果尚未安装"><a href="#1-Install-Vue-CLI-如果尚未安装" class="headerlink" title="1. Install Vue CLI, 如果尚未安装"></a>1. Install Vue CLI, 如果尚未安装</h1><p>npm install –global @vue/cli@next</p>
+<h1 id="2-创建一个新项目-选择-“Manually-select-features”-选项"><a href="#2-创建一个新项目-选择-“Manually-select-features”-选项" class="headerlink" title="2. 创建一个新项目, 选择 “Manually select features” 选项"></a>2. 创建一个新项目, 选择 “Manually select features” 选项</h1><p>vue create my-project-name</p>
+<h1 id="3-选择choose-Vue-cersion与typescript，其余全部取消"><a href="#3-选择choose-Vue-cersion与typescript，其余全部取消" class="headerlink" title="3. 选择choose Vue cersion与typescript，其余全部取消"></a>3. 选择choose Vue cersion与typescript，其余全部取消</h1><h1 id="4-选择vue-3-x-useclass-style-component-syntax-选择y"><a href="#4-选择vue-3-x-useclass-style-component-syntax-选择y" class="headerlink" title="4. 选择vue 3.x useclass-style component syntax 选择y"></a>4. 选择vue 3.x useclass-style component syntax 选择y</h1><h1 id="5-Use-Babel-alongside-TypeScript-required-for-modern-mode-auto-detected-polyfills-transpiling-JSX-选择n"><a href="#5-Use-Babel-alongside-TypeScript-required-for-modern-mode-auto-detected-polyfills-transpiling-JSX-选择n" class="headerlink" title="5. Use Babel alongside TypeScript (required for modern mode, auto-detected polyfills, transpiling JSX)? 选择n"></a>5. Use Babel alongside TypeScript (required for modern mode, auto-detected polyfills, transpiling JSX)? 选择n</h1><h1 id="6-Where-do-you-prefer-placing-config-for-Babel-ESLint-etc-放在package-json中"><a href="#6-Where-do-you-prefer-placing-config-for-Babel-ESLint-etc-放在package-json中" class="headerlink" title="6. Where do you prefer placing config for Babel, ESLint, etc.? 放在package.json中"></a>6. Where do you prefer placing config for Babel, ESLint, etc.? 放在package.json中</h1><h1 id="7-可以考虑将上述的选择配置保存在一个自命名的模板配置中，此后在步骤2就可以选择了"><a href="#7-可以考虑将上述的选择配置保存在一个自命名的模板配置中，此后在步骤2就可以选择了" class="headerlink" title="7. 可以考虑将上述的选择配置保存在一个自命名的模板配置中，此后在步骤2就可以选择了"></a>7. 可以考虑将上述的选择配置保存在一个自命名的模板配置中，此后在步骤2就可以选择了</h1><h1 id="8-需要注意，可以在用户根目录下的-vuerc文件中设置是否使用淘宝镜像源"><a href="#8-需要注意，可以在用户根目录下的-vuerc文件中设置是否使用淘宝镜像源" class="headerlink" title="8. 需要注意，可以在用户根目录下的.vuerc文件中设置是否使用淘宝镜像源"></a>8. 需要注意，可以在用户根目录下的.vuerc文件中设置是否使用淘宝镜像源</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">    - **有的时候官方镜像源的速度比淘宝镜像源的速度快！！**</span><br><span class="line"></span><br><span class="line">  - 执行`npm run serve`，开启服务器，可以在本机端口8080访问App</span><br><span class="line"></span><br><span class="line">  - **使用import导入ts文件时，不用指定后缀名**</span><br><span class="line"></span><br><span class="line">  - **如果要使用ts语法需要单独将组件中的ts写到.ts文件中，而不要写在.vue的script标签中（不识别ts语法，而且会报错）**</span><br><span class="line"></span><br><span class="line">- 参考demo1项目的ts-vue</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## Vue核心概念</span><br><span class="line"></span><br><span class="line">- demo2文件夹的demo2-vue-ts项目</span><br><span class="line"></span><br><span class="line">- 创建与绑定Vue App实例</span><br><span class="line"></span><br><span class="line">  - **data属性，设置数据，此属性接受一个方法，法应返回一个对象，对象的键值对就是绑定的DOM（由vue负责管理维护）与对应的初始值（初始值可以是任何对象类型）**</span><br><span class="line">    - **data属性对应的函数返回值对象会被Vue设置为一个Vue App内部的全局对象并绑定到`this`关键字，这意味着在APP内的其他地方（比如说methods属性内定义的方法中）都可以使用this来索引返回对象中的属性**</span><br><span class="line">      - 需要注意的是不仅仅是此返回值内部的属性绑定到了this中，还有其他的一些属性也绑定了，比方说methods属性中定义的方法也会绑定到this关键字中</span><br><span class="line">  - methods属性</span><br><span class="line">    - 此属性可以定义一些事件回调方法，也可以是用作其他用途的方法</span><br><span class="line">    - 此属性接受一个对象，对象内部存储的值是函数（可以是键值对的形式（值为匿名函数），当然也可以直接设置为函数形式（函数名就是键的名字））</span><br><span class="line">    - **在此属性中定义的函数可以在interpolation中或v-bind中调用执行**</span><br><span class="line">  - methods中定义的方法与data中定义的属性一样可以在Vue App中使用this索引调用</span><br><span class="line"></span><br><span class="line">- HTML标签语法：</span><br><span class="line"></span><br><span class="line">  - Vue 的interpolation语法： 将数据绑定到DOM `&#123;&#123;&#125;&#125;`</span><br><span class="line"></span><br><span class="line">    - **注意此语法只能用在html tag内部例如`&lt;P&gt;&#123;&#123;content&#125;&#125;&lt;/p&gt;`，而不能用来渲染标签属性的值**</span><br><span class="line">    - 此大括号中可以执行简单地js expression，比如`&#123;&#123;Math.random()&#125;&#125;`或`&#123;&#123;1+1&#125;&#125;`但不能执行复杂的多行语句,当然也可以执行Vue中定义好的方法，例如`&lt;P&gt;&#123;&#123;desc()&#125;&#125;&lt;/p&gt;`**在括号内，可以指定参数，后续类似的不再说明**</span><br><span class="line">      - 注意若是在此语法中调用Vue中定义的函数，必须要加上括号，以示调用。正如下边所言**任意类型的变量的值都将转换成字符串形式渲染在此处（包括函数）**</span><br><span class="line">      - **!! 在此语法中直接调用函数有以下的弊端（也包括在v-bind和v-html中使用函数的场景，或者说HTML的Vue标签中没有与事件绑定的方法都会被重新执行一遍，以彻底渲染可能存在的函数中的变量调用）**</span><br><span class="line">        - 当其他事件触发HTML其他部位的内容改变时，Vue会只重新渲染特定部位，但是每次渲染时都会重新渲染`&#123;&#123;somefunc()&#125;&#125;`，这导致其内部的函数调用会多次重复执行，**这是因为Vue不确定函数内部是否有调用被其他事件触发而导致修改的变量，所以会默认重新渲染调用**</span><br><span class="line">        - 综上，在p标签这样的标签内部动态渲染数据的话，不太适合用函数，那么除了使用APP内设置的函数外其他的方法是？**Computed**</span><br><span class="line">    - **任意类型的变量的值都将转换成字符串形式渲染在此处**</span><br><span class="line"></span><br><span class="line">  - v-bind： **标签属性绑定，将`v-bind:`放置在标签属性名前，声明Vue绑定此属性到某一个数据变：`&lt;a v-bind:href=&#x27;content&#x27;&gt;&lt;a&gt;`将content变量的值绑定到href属性上**</span><br><span class="line"></span><br><span class="line">    - v-bind绑定的属性的属性值中可以执行简单地js expression，比如`&#123;&#123;Math.random()&#125;&#125;`或`&#123;&#123;1+1&#125;&#125;`但不能执行复杂的多行语句</span><br><span class="line">    - 当然属性之中也能调用定义好的方法，**可以带括号也可以不带括号**</span><br><span class="line">    - **注意v-bind是单向绑定，只能从Vue映射到HTML HTML的内容改变时不会使Vue的数据改变。 实际上考虑到兼容性的话，v-bind属性中甚至可以执行函数，怎么可能是双向绑定呢，包括其他可以调用函数的Vue属性都应当是如此**</span><br><span class="line">    - **v-bind可以简写为只留一个`:`即可**：`&lt;a :href=&#x27;content&#x27;&gt;&lt;/a&gt;`</span><br><span class="line"></span><br><span class="line">  - `v-html`： 渲染HTML语句，使用`v-html`，使用上述两个标签渲染内容时并不能渲染html格式的字符串，只会以纯字符串的形式展示出来，这是比较安全的做法，如果目的就是渲染HTML语句的话，可以使用v-html标签`&lt;p v-html=&#x27;content&#x27;&gt;&lt;/p&gt;`</span><br><span class="line"></span><br><span class="line">    - 同样的，这里也可以放置函数调用，与`&#123;&#123;&#125;&#125;`语法类似</span><br><span class="line">    - **需要注意的是，此vue属性会覆盖掉作用的标签内部的所有内容，包括子标签，所以使用此属性是，标签内部应为空**</span><br><span class="line">    - **不推荐使用此属性，因为会引入安全问题，[CSRF跨站请求伪造攻击](https://app.yinxiang.com/shard/s16/nl/19429360/485026a9-af01-4732-8473-967886619f89/)**</span><br><span class="line"></span><br><span class="line">  - v-on 事件监听注册 `&lt;button v-on:click=&#x27;methods属性中定义的函数名&#x27;&gt;CLick&lt;/button&gt;`</span><br><span class="line"></span><br><span class="line">    - **可以认为能放函数调用的地方都能设置简单的js语句,但是并不推荐在html中写js逻辑，哪怕就是简单的依据js expression**</span><br><span class="line"></span><br><span class="line">    - 函数如果不指定参数或者不带括号，会默认接受Event类型的参数，可以获得事件的元信息，比如`&lt;input type=&#x27;text&#x27; v-on:input=&quot;getInput&quot;&gt;  `,可以获得用户输入的值`this.name= (&lt;HTMLInputElement&gt;event.target).value;`</span><br><span class="line"></span><br><span class="line">      - **如果在事件回调函数调用中制定了自己的参数，默认的事件对象会被覆盖消失，如果既要自定义参数又要Event对象的话，可以使用`$event`这个特殊变量做形参，浏览器会将事件对象绑定到此变量**</span><br><span class="line"></span><br><span class="line">        ```js</span><br><span class="line">        &lt;input type=&#x27;text&#x27; v-on:input=&quot;setName($event, &#x27;lee&#x27;)&quot;&gt;  </span><br><span class="line">        </span><br><span class="line">          setName(event: Event, secondName: string) &#123;</span><br><span class="line">          this.name= (&lt;HTMLInputElement&gt;event.target).value + &#x27; &#x27; + secondName;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>补充：<strong>Vue内部在重新渲染html时，只会渲染更新数据的部分，而不会整个页面渲染，以提高性能</strong></p>
+</li>
+<li><p>补充</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">v-on:click</span>=<span class="string">&quot;showAlert(&#x27;button click&#x27;)&quot;</span>&gt;</span>show alert<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>在vue属性内部可以执行简单的js语句，但是对于alert与console.log()这样的函数而言，是不能执行的，因为在vue template环境中并不能识别alert这个全局方法或者console这个全局对象，另外在v-on属性的值中可以执行js语句方法</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;button @click=&quot;$emit(&#x27;delete-friend&#x27;, id)&quot;&gt;Delete&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在vue中直接调用Vue全局对象（this）下的属性与方法时都可以不加this，比如这里的<code>$emit</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>v-on:</code>标识可以简写为<code>@</code>&lt;button type=’submit’ @click=”formSubmitHandler”&gt;Click </button>`</p>
+</li>
+<li><p>事件修饰符</p>
+<ul>
+<li><p>例如表单提交事件，要阻止其默认行为，可以在事件监听回调函数中获取Event对象阻止，也可以直接在vue属性上使用事件修饰符</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;form&gt;</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&#x27;submit&#x27;</span> <span class="attr">v-on:click</span>=<span class="string">&quot;formSubmitHandler&quot;</span>&gt;</span>Click <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">formSubmitHandler (event: Event) &#123;</span><br><span class="line">        event.preventDefault();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用事件修饰符</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<form>
+    <button type='submit' v-on:click.prevent="formSubmitHandler">Click </button>
+  </form>
+
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">      </span><br></pre></td></tr></table></figure></li>
+<li><p>例如鼠标点击事件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--只有按下右键点击才能触发点击事件--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">v-on:click.right</span>=<span class="string">&#x27;add(10)&#x27;</span>&gt;</span>Add<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>例如键盘事件，目标是要在输入之后按下enter才能执行特定操作</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--可以绑定多个事件监听机制--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&#x27;text&#x27;</span> <span class="attr">v-on:input</span>=<span class="string">&quot;setName($event, &#x27;lee&#x27;)&quot;</span> <span class="attr">v-on:keyup.enter</span>=<span class="string">&quot;confirmInput&quot;</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">setName(event: Event, secondName: string) &#123;</span><br><span class="line">      this.name= (<span class="tag">&lt;<span class="name">HTMLInputElement</span>&gt;</span>event.target).value + &#x27; &#x27; + secondName;</span><br><span class="line">&#125;,</span><br><span class="line">confirmInput() &#123;</span><br><span class="line">       this.confirmName = this.name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>v-once 使用此属性的标签内部的动态数据会被锁定为初始值，不会进行动态渲染，比较少用</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>Result: &#123;&#123; counter &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span>  <span class="tag">&lt;<span class="name">p</span> <span class="attr">v-once</span>&gt;</span>initial counter: &#123;&#123; counter &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>v-model</p>
+<ul>
+<li><p>前边说的v-bind与v-on的事件出发都只是单向绑定的操作</p>
+<ul>
+<li>v-bind是由Vue的数据渲染到HTML</li>
+<li>v-on是由HTML的事件触发并携带数据设置到Vue App中</li>
+</ul>
+</li>
+<li><p>v-model可以实现双向绑定，用以将<input>, <textarea> and <select>标签（<strong>仅能用在此三个标签</strong>）的值与Vue双向绑定，从而实现互相影响动态改变，在v-model属性值中指定Vue变量名即可</p>
+<ul>
+<li><p>举例对于input标签来说，以下两种写法本质上一样</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span>    <span class="attr">type</span>=<span class="string">&quot;text&quot;</span>    <span class="attr">v-on:input</span>=<span class="string">&quot;setName($event, &#x27;lee&#x27;)&quot;</span>    <span class="attr">v-bind:value</span>=<span class="string">&quot;name&quot;</span>  /&gt;</span>  <span class="tag">&lt;<span class="name">button</span> <span class="attr">v-on:click</span>=<span class="string">&quot;resetInput&quot;</span>&gt;</span>Reset Input<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;<span class="name">input</span>    <span class="attr">type</span>=<span class="string">&quot;text&quot;</span>    <span class="attr">v-model</span>=<span class="string">&quot;name&quot;</span>  /&gt;</span>  <span class="tag">&lt;<span class="name">button</span> <span class="attr">v-on:click</span>=<span class="string">&quot;resetInput&quot;</span>&gt;</span>Reset Input<span class="tag">&lt;/<span class="name">button</span>&gt;</span>resetInput () &#123;        this.name = &#x27;&#x27;;    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>computed 属性</p>
+<ul>
+<li><p>与methods属性类似，但是computed属性内部定义的函数放置到html中后，Vue能够分析其依赖，只有在其依赖变动时，才会重新渲染执行函数</p>
+</li>
+<li><p><strong>computed属性内部定义的方法名应当与属性名类似，因为其调用方法不是函数式的调用方法，而是索引属性（即使用此函数时不能加小括号，Vue负责执行此函数）</strong></p>
+<ul>
+<li>显然此类函数不能定义参数</li>
+</ul>
+</li>
+<li><p>注意此属性中定义的函数一般用于<code>&#123;&#123;&#125;&#125;`语法中，至于事件绑定的函数还是用methods属性内部定义的方法
+
+  - **在此属性内部定义的函数如果有返回值的时候（使用场景决定其肯定有返回值）必须明确返回值类型（如果有的话）否则会有莫名其妙的错误：`Property 'name' does not exist on type ComponentPublicInstance`**
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">computed: &#123;    fullName():string &#123;      <span class="built_in">console</span>.log(<span class="string">&quot;work!&quot;</span>);      <span class="keyword">if</span> (<span class="built_in">this</span>.name === <span class="string">&quot;&quot;</span>) &#123;        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;      &#125; <span class="keyword">else</span> &#123;        <span class="keyword">return</span> (<span class="built_in">this</span>.name + <span class="string">&quot; &quot;</span> + <span class="string">&quot;jia&quot;</span>);      &#125;    &#125;  &#125;,             <span class="xml"><span class="tag">&lt;<span class="name">p</span>&gt;</span>You name: &#123;&#123;fullName&#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+  - **computed定义的成员类型上是函数，但是使用方式是属性（与data类似），不仅仅可以在HTML中使用，也可以在Vue App中使用this来索引获取其值**
+
+- watch属性 
+
+  - 与computed类似，可以都是在依赖更改后，自动被Vue执行的函数，差异在于：
+
+    - **computed用于渲染内容时使用函数**
+    - **watchers用于依赖更改后执行特定的逻辑，而不是返回值用于渲染**
+
+  - watchers内部定义的函数**应该与要绑定的依赖（属性）同名，Vue会自动绑定关系**，当属性的值变动时，自动执行watchers内部的同名方法
+
+  - 函数可以不指定参数，使用this索引属性，获取属性的最新的值，也可以设置参数，以获得Vue传来的对应绑定属性的新值与旧值（两个参数都是可选的）
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;    <span class="keyword">return</span> &#123;      <span class="attr">counter</span>: <span class="number">0</span>,      <span class="attr">name</span>: <span class="string">&#x27;&#x27;</span>,      <span class="attr">fullName</span>: <span class="string">&#x27;&#x27;</span>    &#125;;  &#125;,<span class="attr">watch</span>: &#123;    name (newValuue, oldValue) &#123;        <span class="built_in">console</span>.log(oldValue);        <span class="built_in">this</span>.fullName = newValuue + <span class="string">&#x27; &#x27;</span> + <span class="string">&#x27;jia&#x27;</span>;    &#125;  &#125;,</span><br></pre></td></tr></table></figure>
+
+  - watch可以监听属性变化，但是不如computed方便，因为computed的函数会自动分析依赖的变化（**依赖不止一个**），但是watch内部定义的函数必须对所有依赖都设定一个函数，比较麻烦
+
+  - 因此watcher内部定义的函数适合绑定单个属性，并只做更改该属性的逻辑，**如果要与其他watch函数共同更改同一个渲染值的话，使用computed更方便（不是不可以，只是更方便）**
+
+  - **watch可以与computed中定义的属性（虽然是方法形式，但是视作是属性）绑定，与data中的属性类似，同名即可**
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;    <span class="keyword">return</span> &#123;      <span class="attr">counter</span>: <span class="number">0</span>,    &#125;;  &#125;,  <span class="attr">watch</span>: &#123;    <span class="comment">// 仅在finalCounter返回值改变时触发执行    finalCounter() &#123;        const that = this;        setTimeout(() =&gt; &#123;            that.counter = 0;        &#125;, 5000);    &#125;  &#125;,  computed: &#123;    finalCounter(): string | number &#123;      if (this.counter &lt; 37) &#123;        return &quot;not yet&quot;;      &#125; else if (this.counter &gt; 37) &#123;        return &quot;too much&quot;;      &#125;      return 37;    &#125;,  &#125;,  methods: &#123;    add(num: number) &#123;      this.counter += num;    &#125;,  &#125;,&#125;);</span></span><br></pre></td></tr></table></figure>
+
+    
+
+- watch与computed与methods的区分使用
+
+  ![image-20210110155134559](http://images.demoli.xyz/image-20210110155134559.png)
+
+  - methods最好仅用于事件绑定
+  - computed用于内容渲染
+  - watch用来执行非数据更改类型的逻辑
+
+- 动态样式
+
+  - 两种方式
+
+    - inline style属性 （不常用）
+
+      <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span>  <span class="comment">&lt;!-- html中的几乎所有标签都能注册点击事件 --&gt;</span>  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;demo&quot;</span> <span class="attr">:style</span>=<span class="string">&quot;&#123;borderColor: boxASelected ? &#x27;red&#x27;: &#x27;#ccc&#x27;&#125;&quot;</span> @<span class="attr">click</span>=<span class="string">&quot;select(&#x27;A&#x27;)&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span>  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;demo&quot;</span> <span class="attr">:style</span>=<span class="string">&quot;&#123;borderColor: boxBSelected ? &#x27;red&#x27;: &#x27;#ccc&#x27;&#125;&quot;</span>  @<span class="attr">click</span>=<span class="string">&quot;select(&#x27;B&#x27;)&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span>  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;demo&quot;</span> <span class="attr">:style</span>=<span class="string">&quot;&#123;borderColor: boxCSelected ? &#x27;red&#x27;: &#x27;#ccc&#x27;&#125;&quot;</span>  @<span class="attr">click</span>=<span class="string">&quot;select(&#x27;C&#x27;)&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+      - 使用style属性在标签内配置样式或者通过设置class id等在css文件中全局配置样式`<div class="demo" style="border-color: red" @click="select('A')"></div>`
+      - 为了使用Vue动态设置样式，使用v-bind绑定此属性，此时style属性的值可以使用特殊语法：`<div class="demo" :style="&#123;'border-color':'red'&#125;" @click="select('A')"></div>`或者`<div class="demo" :style="&#123;borderColor:'red'&#125;" @click="select('A')"></div>`推荐使用后者，此时style的值是一个样式对象，样式对象中的值可以直接使用Vue中定义的变量
+
+    - **vue中所有类似的写法中，对象的属性名中如果有多个`-`，应该用引号括起来**
+
+- class属性(直接赋class值)
+
+      <figure class="highlight plaintext"><figcaption><span><!-- html中的几乎所有标签都能注册点击事件 -->  <div :class</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+    - 实际上还有更方便的写法（使用boolean标识）        ```html      <template>        <!-- html中的几乎所有标签都能注册点击事件 -->        <div :class="&#123;demo: true, active: boxASelected &#125;"  @click="select('A')"></div>        <div :class="&#123;demo: true, active: boxBSelected &#125;"  @click="select('B')"></div>        <div :class="&#123;demo: true, active: boxCSelected &#125;"  @click="select('C')"></div>      </template>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- **class属性接受一个对象，对象的键名是class名字，值为truthy或者falsy，表示对象的class是否被添加到此标签中**</span><br><span class="line"></span><br><span class="line">- 因为默认都有demo这个class，其并非动态的，所以可以提出来使用普通的class属性标识，Vue会自动将动态class与静态class合并</span><br><span class="line"></span><br><span class="line">    ````html</span><br><span class="line">  &lt;template&gt;  &lt;!-- html中的几乎所有标签都能注册点击事件 --&gt;  &lt;div class=&quot;demo&quot; :class=&quot;&#123;active: boxASelected &#125;&quot;  @click=&quot;select(&#x27;A&#x27;)&quot;&gt;&lt;/div&gt;  &lt;div class=&quot;demo&quot; :class=&quot;&#123;active: boxBSelected &#125;&quot;  @click=&quot;select(&#x27;B&#x27;)&quot;&gt;&lt;/div&gt;  &lt;div class=&quot;demo&quot; :class=&quot;&#123;active: boxCSelected &#125;&quot;  @click=&quot;select(&#x27;C&#x27;)&quot;&gt;&lt;/div&gt;&lt;/template&gt;</span><br><span class="line">    ````</span><br><span class="line"></span><br><span class="line">  - 静态class与动态class也可以写在一个数组当中</span><br><span class="line"></span><br><span class="line">        ```html&lt;template&gt;  &lt;!-- html中的几乎所有标签都能注册点击事件 --&gt;  &lt;div :class=&quot;[&#x27;demo&#x27;, boxAActive]&quot;  @click=&quot;select(&#x27;A&#x27;)&quot;&gt;&lt;/div&gt;  &lt;div :class=&quot;[&#x27;demo&#x27;, boxBActive]&quot;  @click=&quot;select(&#x27;B&#x27;)&quot;&gt;&lt;/div&gt;  &lt;div :class=&quot;[&#x27;demo&#x27;,boxCActive]&quot;  @click=&quot;select(&#x27;C&#x27;)&quot;&gt;&lt;/div&gt;&lt;/template&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- class的值如果需要比较复杂的逻辑判断的话，可以使用computed属性</span><br><span class="line"></span><br><span class="line">      ```jsexport default defineComponent(&#123;  data() &#123;      return &#123;        boxASelected: false,        boxBSelected: false,        boxCSelected: false,      &#125;;  &#125;,  methods: &#123;      select(box:string) &#123;          switch (box) &#123;              case &#x27;A&#x27;:                 this.boxASelected = !this.boxASelected;                break;            case &#x27;B&#x27;:                this.boxBSelected = !this.boxBSelected;                break;            case &#x27;C&#x27;:                this.boxCSelected = !this.boxCSelected;                break;          &#125;      &#125;  &#125;,  computed: &#123;      boxAActive ():&#123;active: boolean&#125; &#123;        return &#123;active: this.boxASelected &#125;;      &#125;,      boxBActive ():&#123;active: boolean&#125; &#123;        return &#123;active: this.boxBSelected &#125;;      &#125;,      boxCActive ():&#123;active: boolean&#125; &#123;        return &#123;active: this.boxCSelected &#125;;      &#125;,  &#125;</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 关于动态样式的小demo</span><br><span class="line"></span><br><span class="line">  ```typescript</span><br><span class="line">  import &#123; defineComponent &#125; from &quot;vue&quot;;// 引入css组件import &quot;./App.css&quot;;interface In &#123;    userInput1: string;    userInput2: string;    isHidden: boolean &#125;// 在vue3中将App配置对象放到函数defineComponent中以使ts正确推断出其中的类型，比如thisexport default defineComponent(&#123;  data() :In&#123;      return &#123;        userInput1: &#x27;&#x27;,        userInput2: &#x27;&#x27;,        isHidden: false      &#125;;  &#125;,  methods: &#123;      toogleP () &#123;        this.isHidden = ! this.isHidden;      &#125;  &#125;,  computed: &#123;      pClass (): string[] &#123;          return [this.userInput1, this.isHidden? &#x27;hidden&#x27;:&#x27;visible&#x27;];      &#125;  &#125;&#125;);</span><br></pre></td></tr></table></figure>
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt; &lt;input type=&#x27;text&#x27; v-model=&quot;userInput1&quot;&gt; &lt;p :class=&quot;pClass&quot;&gt;   Style Me! &lt;/p&gt; &lt;button @click=&quot;toogleP&quot;&gt;Toggle Paragraph&lt;/button&gt; &lt;input type=&#x27;text&#x27; v-model=&quot;userInput2&quot;&gt; &lt;p :style=&quot;&#123;backgroundColor: userInput2&#125;&quot;&gt;   Style Me inLine! &lt;/p&gt;&lt;/template&gt;&lt;script lang=&quot;ts&quot; src=&#x27;./App.ts&#x27;&gt;&lt;/script&gt;&lt;!--在这里写script会报错--&gt;</span><br></pre></td></tr></table></figure>
+
+    - 需要注意的是尽量把逻辑写在ts中而不是html中
+
+## 条件渲染与列表渲染
+
+- 条件渲染是交互响应式的前端APP中很常见的功能，即根据数据的状态来判断特定DOM是否存在
+
+- 仍然从以demo入手
+
+- 条件渲染
+
+  - v-if，其值可以为js expression methods computed属性或者是data中定义的属性等等，只要对应的值是一个boolean的值，就可以。此属性可决定其作用的标签及其子标签在何种情况下得到渲染
+  - v-else 配合v-if使用，需要注意的是v-else务必要在紧挨着v-if的下一个HTML标签中（**不能是子标签！**）使用，中间不能间隔标签
+  - v-else-if 逻辑类似，**注意使用顺序，以及必须无间隔的使用**
+  - v-show 
+    - 与v-if的渲染作用类似，都使用逻辑判断进行条件渲染
+    - 不与v-else等配合使用而是单独使用
+    - 其实现机制与v-if不同
+      - 当v-if逻辑判定为不渲染时，整个对应的DOM组件会被直接删除，而v-show只是添加一个style属性进行hidden，但是DOM结构本身依然存在
+      - **v-if适用于更改次数比较少的场景，v-show适用于经常更改的DOM，比如频繁切换的按钮等等**
+
+- 列表渲染
+
+  - v-for，其可遍历值的来源同样可以是多种样式，但是最终遍历的值应该是一个可以遍历迭代的对象
+
+    - 例如`<li v-for="goal in goals">&#123;&#123; goal &#125;&#125;&lt;/li&gt;</code></p>
+<ul>
+<li>支持对于对象数列的属性索引，例如<code>&lt;li v-for=&quot;goal in goals&quot;&gt;&#123;&#123; goal.name &#125;&#125;&lt;/li&gt;</code></li>
+</ul>
+</li>
+<li><p><strong>v-for应该放在要循环的HTML标签（li）上,而不是ul上</strong></p>
+</li>
+<li><p>goal变量的作用于仅限于v-for作用的标签内部（<strong>包含内部的子标签</strong>）</p>
+</li>
+<li><p><strong>Vue渲染列表时，当列表数据变动时，只重新渲染新变动的数据，列表中原有的未变动的数据不会重新渲染，这样可以提升性能</strong></p>
+<ul>
+<li><strong>vue的动态渲染过程可以在Chrome控制台中的elements中观察到，变动的标签会有一个闪烁</strong></li>
+</ul>
+</li>
+<li><p>支持获取成员的索引:<code>&lt;li v-for=&quot;(goal, index) in goals&quot;&gt;&#123;&#123; index + 1 &#125;&#125; : &#123;&#123; goal &#125;&#125;&lt;/li&gt;</code></p>
+</li>
+<li><p>支持对于object的遍历渲染<code>&lt;li v-for=&quot;(value, key, index) in &#123;name: &#39;lijia&#39;, age: 23&#125;&quot;&gt;&#123;&#123; key &#125;&#125; : &#123;&#123; value &#125;&#125; - &#123;&#123; index &#125;&#125;&lt;/li&gt;</code></p>
+<ul>
+<li><p>最终的渲染效果为：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span><span class="tag">&lt;<span class="name">li</span>&gt;</span>name : lijia - 0<span class="tag">&lt;/<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">li</span>&gt;</span>age : 23 - 1<span class="tag">&lt;/<span class="name">li</span>&gt;</span><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>支持快捷遍历自然数数组<code>&lt;li v-for=&quot;num in 10&quot;&gt;&#123;&#123; num &#125;&#125;&lt;/li&gt;</code></p>
+<ul>
+<li>从1开始</li>
+</ul>
+</li>
+<li><p>注意事项，<strong>不要在同一标签内部使用v-for与v-if，可以在v-for的子标签内部使用v-if，在子标签内部v-if同样可以使用v-for的迭代的变量</strong></p>
+</li>
+<li><p>奇怪的BUG</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>My course goals<span class="tag">&lt;/<span class="name">h2</span>&gt;</span>  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">v-model</span>=<span class="string">&quot;userInput&quot;</span> /&gt;</span>  <span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">&quot;addGoal&quot;</span>&gt;</span>Add Goal<span class="tag">&lt;/<span class="name">button</span>&gt;</span>  <span class="tag">&lt;<span class="name">p</span> <span class="attr">v-if</span>=<span class="string">&quot;goals.length === 0&quot;</span>&gt;</span>    No goals have been added yet - please start adding some!  <span class="tag">&lt;/<span class="name">p</span>&gt;</span>  <span class="tag">&lt;<span class="name">ul</span> <span class="attr">v-else</span>&gt;</span>    <span class="tag">&lt;<span class="name">li</span> @<span class="attr">click</span>=<span class="string">&quot;deleteGoal(index)&quot;</span> <span class="attr">v-for</span>=<span class="string">&quot;(goal, index) in goals&quot;</span>&gt;</span>      <span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;&#123; index + 1 &#125;&#125; : &#123;&#123; goal &#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span>      <span class="comment">&lt;!-- 事件修饰符，使得鼠标点击输入框时，输入框的父标签的触发事件会被终止，但是在除了输入框的其他父标签内部，都会正常触发--&gt;</span>      <span class="comment">&lt;!--因为没有要指定的触发函数，所以可直接省略--&gt;</span>      <span class="tag">&lt;<span class="name">input</span> @<span class="attr">click.stop</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span>&gt;</span>    <span class="tag">&lt;/<span class="name">li</span>&gt;</span>  <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>BUG在于，当有两个li，在第一个li中输入内容，之后删除第一个li，输入框中的内容会自动转移到下一个个li中，或者说每当删除列表前边的元素后，其内部的input的内容就会覆盖到紧挨着的下一个元素中，并且这种迭代是顺延的</strong></p>
+<ul>
+<li><p>bug的原因在于: <strong>vue为例提升性能，在列表渲染过程中，会复用被删除的列表元素中的内部的子标签（因为每个元素都有相同的子标签）,复用的过程中，对于模板语法部分<code>&#123;&#123;&#125;&#125;`会重新渲染器内容，对于普通的HTML标签，比如案例中的input标签会直接复用**
+      - 解决办法是在使用v-for的时候添加`key`这个属性，此标签属性并非HTML中的属性，而是Vue引入的，此属性的值用来唯一标识列表中的每一个成员
+        - **取什么值作为唯一标识内容，一般就是数据库的ID，注意不能是索引，索引是动态变化的，不与内容绑定，不能作为唯一标识**
+        - 有了唯一标识后，Vue不再复用被删除的元素中的内容
+        - **注意此key属性应使用v-bind绑定，所有应为`:key`**
+    - **综上，使用v-for时尽量总是使用key属性以保证Vue能够区分每一个子元素，避免状态丢失**
+
+- Demo 记录
+
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;h2&gt;My course goals&lt;/h2&gt;  &lt;input type=&quot;text&quot; v-model=&quot;userInput&quot; /&gt;  &lt;button @click=&quot;addGoal&quot;&gt;Add Goal&lt;/button&gt;  &lt;p v-if=&quot;goals.length === 0&quot;&gt;    No goals have been added yet - please start adding some!  &lt;/p&gt;  &lt;ul v-else :style=&quot;&#123;display: isHidden? &#x27;none&#x27;:&#x27;&#x27;&#125;&quot;&gt;    &lt;li @click=&quot;deleteGoal(index)&quot; v-for=&quot;(goal, index) in goals&quot; :key=&quot;goal&quot;&gt;      &lt;p&gt;&#123;&#123; index + 1 &#125;&#125; : &#123;&#123; goal &#125;&#125;&lt;/p&gt;      &lt;input @click.stop type=&quot;text&quot;&gt;    &lt;/li&gt;  &lt;/ul&gt;  &lt;button @click=&quot;toggleListStatus&quot;&gt;&#123;&#123;buttonStatus&#125;&#125;&lt;/button&gt;&lt;/template&gt;&lt;script lang=&quot;ts&quot; src=&#x27;./App.ts&#x27;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;<span class="comment">// 引入css组件import &quot;./App.css&quot;;interface In &#123;    goals: string[];    userInput: string;    isHidden: boolean&#125;// 在vue3中将App配置对象放到函数defineComponent中以使ts正确推断出其中的类型，比如thisexport default defineComponent(&#123;  data() :In&#123;      return &#123;        goals: [],        userInput: &#x27;&#x27;,        isHidden: false      &#125;;  &#125;,  methods: &#123;      addGoal(): void &#123;        if (this.userInput !== &#x27;&#x27;) &#123;            this.goals.push(this.userInput);            this.userInput = &#x27;&#x27;;        &#125;      &#125;,      deleteGoal(index: number): void &#123;          this.goals.splice(index, 1);      &#125;,      toggleListStatus() &#123;        this.isHidden = ! this.isHidden;      &#125;  &#125;,  computed: &#123;    buttonStatus (): string &#123;        return this.isHidden? &#x27;show list&#x27;: &#x27;hidden list&#x27;;    &#125;  &#125;&#125;);</span></span><br></pre></td></tr></table></figure>
+
+  
+
+## Attack Monster Demo
+
+- 补充知识：**css属性是字符串值，比如`width: 100%` 并不是number类型**
+- 详见源码
+
+
+
+## Vue的内部机制
+
+- Vue会跟踪data属性中定义的值，并且将定义的属性（以及methods中定义的函数和computed中定义的属性）绑定到一个全局对象中，并让Vue App 中的this指向此全局对象 
+
+- Vue会将data中定义的属性包装为交互式属性，**操作方法就是使用js中的Proxy**，包装为交互式属性的作用就是，每当此属性被赋予新的值得时候，Vue都能知晓----**这是最关键的第一步，只有这样Vue才能在数据变化时尝试去更新HTML中的渲染效果**
+
+  - js中的变量默认不是交互式的变量，比如下边的案例
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> message = <span class="string">&#x27;hello&#x27;</span>;<span class="keyword">let</span> longMessage = message + <span class="string">&#x27; world&#x27;</span>;<span class="comment">// hello worldconsole.log(longMessage);message = &#x27;hello!!!&#x27;;// hello worldconsole.log(longMessage);</span></span><br></pre></td></tr></table></figure>
+
+    - js并不会意识到message改变了，也不会因为数据的变动去重复执行字符串的拼接
+
+  - proxy的使用
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> data = &#123;    <span class="attr">message</span>: <span class="string">&#x27;Hello&#x27;</span>,    <span class="attr">longMessage</span>: <span class="string">&#x27;Hello World&#x27;</span>&#125;<span class="keyword">const</span> handler:ProxyHandler&lt;&#123;<span class="attr">message</span>: string, <span class="attr">longMessage</span>: string&#125;&gt; = &#123;    <span class="comment">// 被代理对象的属性被修改就会触发handler中的此函数    set(target, key, value)&#123;        /*        // target是被代理的对象，注意其属性不会修改(js默认都是非交互式的变量)        console.log(target);        // 被修改的属性名        console.log(key);        // 被赋予的新的属性值        console.log(value);        // 返回值得作用暂且不知        */        // 监听一个属性，并更新另外的属性，这也是Vue最常做的事        // 注意此函数只负责监听，数据的修改需要显式完成        if (key === &#x27;message&#x27;) &#123;            target.longMessage = value + &#x27; World&#x27;;        &#125;        target.message = value;        return true;    &#125;    &#125;const proxy = new Proxy(data, handler);// 被代理的对象的属性会自动绑定在proxy对象上proxy.message = &#x27;Hello!!!&#x27;;// Hello!!! Worldconsole.log(proxy.longMessage);</span></span><br></pre></td></tr></table></figure>
+
+    
+
+- 同一个页面中可以绑定多个Vue App，但是需要注意的是，这些Vue App 之间是相互独立的
+
+- 关于Template
+
+  - 实际上Vue App挂载点所在的HTML 节点被称为Vue App 的 Template
+
+  - template可以作为Vue App的一个配置属性，但是在ts或者js中写html是不推荐的
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;		<span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;      <span class="keyword">return</span> &#123;        <span class="attr">name</span>: <span class="string">&#x27;lee&#x27;</span>      &#125;;    &#125;,    <span class="attr">methods</span>: &#123;          &#125;,    <span class="attr">template</span>: <span class="string">`&lt;p&gt;&#123;&#123; name &#125;&#125;&lt;/p&gt;`</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+    - 实际上使用脚手架构建项目后，模板HTML可以被写在`.vue`文件中
+
+  - 关于用户输入的另外一种获取方法
+
+    - 目前为止，获取用户输入有两张方法
+
+      - @input
+      - v-model
+
+    - 以上两者的做法共同点在与用户的输入与Vue属性数据是实时同步更新的，如果不要求同步更新，只是在特定情况下需要获取输入，则使用Refs
+
+      - 使用ref属性，此标签与key属性一样都是Vue属性，不是HTML属性，可以作用在任意HTML标签
+
+        <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&#x27;text&#x27;</span> <span class="attr">ref</span>=<span class="string">&#x27;userInput&#x27;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+        - **ref属性指定的值会被Vue缓存，以备需要时使用，注意此值不是Vue中定义的变量名，仅仅是一个id而已**
+        - **不需要使用`:ref`进行绑定（并不需要为此标签属性绑定动态内容，v-bind是用来向标签属性输出动态内容的，而这里的数据流动方向完全相反）**
+
+      - 在Vue App中获取指定id对应的HTML标签
+
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;		<span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;      <span class="keyword">return</span> &#123;        <span class="attr">message</span>: <span class="string">&#x27;&#x27;</span>      &#125;;    &#125;,    <span class="attr">methods</span>: &#123;      <span class="function"><span class="title">setText</span>(<span class="params"></span>)</span> &#123;        <span class="comment">// this中的以$开头的属性即为Vue提供的内置属性        // 注意索引ID得到的是对应的HTML标签对象，也就是HTMLElement类型的对象,实际上与event.target一样        this.message = this.$ref.userInput.value;      &#125;    &#125;&#125;)</span></span><br></pre></td></tr></table></figure>
+
+- Vue更新DOM的方法：使用Virtual DOM
+
+  <img src="http://images.demoli.xyz/image-20210119205230894.png" />
+
+  - Vue App中的数据连同Vue Template被渲染到Browser DOM中，与此同时Template中的Vue属性和语法会被删除
+  - Vue会根据数据的变动做局部更新，而不会每次数据变动就重新渲染整个界面
+    - Vue是如何做到局部更新的呢？或者说在渲染过程中提升性能的方法是？
+      - Virtual DOM
+        - <img src="http://images.demoli.xyz/image-20210119205856115.png" alt="image-20210119205856115" style="zoom:67%;" />
+        - - Virtual DOM实际上就是把实际的DOM按照js对象的格式维护在内存中，当Vue数据发生变化时，会重新渲染一份Virtual DOM 在内存中（**实际上Vue有更多的其他的优化手段，比如这里，并非重新渲染一份完整的虚拟DOM，也只是渲染部分**），然后比较内存中的两份虚拟DOM 不同之处渲染到实际的DOM中
+
+- Vue App Lifecycle
+
+  - Vue实例的生命周期，Vue实例有许多生命节点，并且提供了hook，可以使用这些hook，在Vue的特定生命阶段，执行特定的代码
+
+    <img src="http://images.demoli.xyz/image-20210119211810400.png" alt="image-20210119211810400" style="zoom:80%;" />
+
+    - 注意在beforeMount hook处Template还没有被渲染到浏览器的DOM中，在mounted hook处，已经得到渲染
+    - 同理，在beforeUpdate处更新还没有被渲染到浏览器DOM中，在update处，更新得到渲染
+    - **Vue App的unmount在目前为止并未用到，可以使用`const app = createApp(vueConfig).mount('#app'); app.unmount()`进行Vue App的卸载**
+
+  - LifeCycle Hook的使用
+
+    - hook函数的使用很简单，在Vue App的配置对象中，直接定义同名方法即可,Vue会在到达对应的节点处回调这里定义的同名hook函数
+
+      <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;  <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;    <span class="keyword">return</span> &#123;&#125;;  &#125;,  <span class="attr">methods</span>: &#123;      &#125;,  <span class="function"><span class="title">beforeCreate</span>(<span class="params"></span>)</span> &#123;      &#125;,  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;      &#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+## Components
+
+- 从一个demo引入为什么需要Components
+
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;ul&gt;        &lt;li v-for=&quot;friend in friendList&quot; :key=&quot;friend.id&quot;&gt;          &lt;h2&gt;&#123;&#123;friend.name&#125;&#125;&lt;/h2&gt;          &lt;button @click=&quot;showDetails&quot;&gt;Show Details&lt;/button&gt;          &lt;ul :hidden=&quot;detailsEnable&quot;&gt;            &lt;li&gt;&lt;strong&gt;Phone:&lt;/strong&gt; &#123;&#123;friend.phone&#125;&#125;&lt;/li&gt;            &lt;li&gt;&lt;strong&gt;Email:&lt;/strong&gt; &#123;&#123;friend.email&#125;&#125;&lt;/li&gt;          &lt;/ul&gt;        &lt;/li&gt;      &lt;/ul&gt;&lt;/template&gt;&lt;script src=&quot;./App.ts&quot; lang=&quot;ts&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+  - 实际上在前边的demo中v-for内部有这么大的一块HTML都比较少见
+  - **不要混淆此处的问题与v-for循环中使用key的问题，此处是结构导致的HTML标签重复无法有效组织的问题，key是性能优化引发的HTML标签复用的问题**
+
+  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;<span class="comment">// 引入css组件import &quot;./App.css&quot;;class Friend &#123;    constructor(public name: string, public id: number, public phone: string, public email: string)&#123;&#125;;&#125;export default defineComponent (&#123;    data(): &#123;friendList: Friend[], detailsEnable: boolean&#125; &#123;        return &#123;            friendList: [new Friend(&#x27;Manuel Lorenz&#x27;, Math.random(), &#x27;01234 5678 991&#x27;, &#x27;manuel@localhost.com&#x27;), new Friend(&#x27;Julie Jones&#x27;, Math.random(), &#x27;09876 543 221&#x27;, &#x27;julie@localhost.com&#x27;)],            detailsEnable: true        &#125;;    &#125;,    methods: &#123;        showDetails () &#123;            this.detailsEnable = !this.detailsEnable;        &#125;    &#125;&#125;)</span></span><br></pre></td></tr></table></figure>
+
+  - 问题在于渲染朋友列表的时候，有一个showDetail按钮，但是此按钮与对应的hidden属性成为了列表中每一个成员都有的标签，但是点击后的效果对所有成员生效，**如果要使用friend.id作为方法参数来确定显示效果，需要为每一个friend定义一个类似于`detailsEnable`这样的属性，friend列表来自于数据库也是动态的，所以此方法失效，其他的办法？**
+
+- component
+
+  - 定义components的方法
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;<span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./components/App/App.vue&#x27;</span>;<span class="keyword">import</span> friendsComponent <span class="keyword">from</span> <span class="string">&#x27;./components/friendList/friends.vue&#x27;</span>;<span class="keyword">const</span> app= createApp(App)<span class="comment">// Global Component：添加component// 1. 指定component名字，类似于是一个定制的HTML 标签的名字，应该是两个单词中间用-隔开，这样不会与默认已有的// HTML 标签冲突// 2. Vue config app.component(&#x27;friend-list&#x27;, friendsComponent);app.mount(&#x27;#app&#x27;)// Local component： 加载component的另一个方法是在App.vue (Main Vue App Config Object)中使用components属性来加载指定的components,此属性需要一个对象，对象成员键值对的键就是component的名字（如果使用了-需要用引号括起来），值就是component config object,或者可以将import的component config object命名为两个单词使用驼峰组合或pascal组合（所有单词大写），则component的名字自动设置为拆开后用-相连，并使用小写，此时不用再指定键名，如下案例所示import friendList from &#x27;../friendList/friends.vue&#x27;export default defineComponent (&#123;    data(): &#123;friendList: Friend[]&#125; &#123;        return &#123;            // 列表在组件中的渲染可能需要组件之间的数据交流了            friendList: [new Friend(&#x27;Manuel Lorenz&#x27;, Math.random(), &#x27;01234 5678 991&#x27;, &#x27;manuel@localhost.com&#x27;), new Friend(&#x27;Julie Jones&#x27;, Math.random(), &#x27;09876 543 221&#x27;, &#x27;julie@localhost.com&#x27;)]        &#125;;    &#125;,    components: &#123;        // friend-list        // FriendList也可以对应friend-list的components名字        friendList    &#125;&#125;)</span></span><br></pre></td></tr></table></figure>
+
+    - components的名字**（也就是在template中使用的自定义的HTML标签的名字应该尽量使用a-b的构造，使用pascal格式也可以）**
+    - **在components属性中只放一个值，就可以自动扩展为`与该值同名的键:该值`，这是由modern js引入的特性**
+    - Vue component实际上就是另外一个Vue App,只不过此App依附于主App
+    - 子App与父App目前来说是隔离的，各自定义相同的属性或函数等，也不会冲突
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;ul&gt;    &lt;!-- 在 main APP 中引入component的方法 --&gt;    &lt;friend-list&gt;&lt;/friend-list&gt;    &lt;!-- 两个组件完全隔离，互不干扰，解决了前边的问题 --&gt;    &lt;friend-list&gt;&lt;/friend-list&gt;  &lt;/ul&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;li&gt;    &lt;h2&gt;&#123;&#123; friend.name &#125;&#125;&lt;/h2&gt;    &lt;button @click=&quot;showDetails&quot;&gt;Show Details&lt;/button&gt;    &lt;ul :hidden=&quot;detailsEnable&quot;&gt;      &lt;li&gt;&lt;strong&gt;Phone:&lt;/strong&gt; &#123;&#123; friend.phone &#125;&#125;&lt;/li&gt;      &lt;li&gt;&lt;strong&gt;Email:&lt;/strong&gt; &#123;&#123; friend.email &#125;&#125;&lt;/li&gt;    &lt;/ul&gt;  &lt;/li&gt;&lt;/template&gt;&lt;script src=&quot;./friends.ts&quot; lang=&quot;ts&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+    
+
+    - component是可复用的组件，**当然组件之间也可以互相通信**
+    - **单Vue App 多 component与多Vue App都可以实现页面应用中控制多个HTML部分的作用，但是多Vue App之间并没有提供官方支持的数据交换方式，而多component中提供了**
+
+## Vue CLI
+
+- 引入components之后，发现代码变得臃肿，堆积在一个文件中，并且总是使用静态HTML文件来加载Vue 应用并不是很好
+  - 对于Vue这样的前框框架开发时不需要和后端协商进行，因为完全独立了，直接在自己开发机设置服务器serve Vue App即可，至于数据完全可以mock或者使用假数据即可
+- Vue CLI提供的web server可以在代码变动后自己重启加载
+- VueCLI为 VS Code提供了语法支持
+- Vue CLI可以使得js与css的加载全部使用 ES Module的形式，而不是HTML标签加载的形式
+- 要使用Vue CLI 需要安装nodejs（提供npm）
+  - 现在知道nodejs对于前端的巨大意义了，不仅仅在于让js脱离浏览器的限制，也在于为前端工程化打下了基础
+- .vue文件的组成部分
+  - template标签--Vue app或者是component的Template
+  - script标签，Vue app config object或者component config object
+    - 可以加载文件
+  - style标签 Vue app的样式或者是component的样式
+    - 可以单独写在css文件中，然后在js或ts文件中使用import "css文件位置"来加载
+    - 样式默认是全局生效的
+  - 对于.vue文件，可以在vscode中安装Vetur插件，让IDE支持.vue的语法
+- components文件夹内的.vue名字一般应该与组件名相同
+
+## Vue Components
+
+- 前边已经使用demo尝试引入了Components，但是并未涉及Main Vue App如何向Components传递数据，以及Components之间如何交换数据，这也是Components的关键所在
+- **Components的最大的特性在于其可重用性，因此一般数据不会直接定义在Components中，而是由Main Vue App通过各种方式获取并传递给Components，Componeents就是无情的可复用的渲染机器**
+
+### Props
+
+- **实现Main Vue App 与 Components数据交换的就是Props**
+
+- Props就是properties的简称，可以将此概念理解为在组件标签中使用自定义属性
+
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--App.vue--&gt;&lt;template&gt;  &lt;ul&gt;    &lt;!-- 在 main APP 中引入component的方法 --&gt;    &lt;!--使用自定义属性向components中传递数据--&gt;    &lt;friend-list name=&quot;lee&quot; phone_number=&quot;1313&quot; email=&quot;2321@we.com&quot;&gt;&lt;/friend-list&gt;    &lt;friend-list name=&quot;dan&quot; phone_number=&quot;2134&quot; email=&quot;2134@we.com&quot;&gt;&lt;/friend-list&gt;  &lt;/ul&gt;&lt;/template&gt;&lt;script src=&quot;./App.ts&quot; lang=&quot;ts&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+  - components接受这些自定义的属性，需要在config object中使用props属性，此属性接受一个字符串数组
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;    <span class="comment">// 注意在props列表中定义的字符串会像data中定义的属性一样被绑定到全局对象中，可以被this索引，也可以在template中引用，因为是作为属性，所以起名字不能使用-所以 自定义的属性名应在这里改写为其对应的驼峰命名，Vue可以进行关联    props:[        &#x27;name&#x27;,        &#x27;phoneNumber&#x27;,        &#x27;email&#x27;    ],    data() &#123;        return &#123;            detailsEnable: true        &#125;;    &#125;,    methods: &#123;        showDetails () &#123;            this.detailsEnable = !this.detailsEnable;        &#125;    &#125;&#125;);</span></span><br></pre></td></tr></table></figure>
+
+    - **只有自定义属性名带-时，才需要将对应的props属性名进行更名**
+
+      - **props在template中应尽量命名为非a-b的形式，直接使用驼峰命名法，避免由Vue进行关联（可能不小心导致错误）**
+
+    - **更名只能更改为驼峰命名法，不能更改为pascal法**
+
+      - **前边的加载components的命名是可以使用pascal命名法的**
+
+    - **props中定义的变量，是只读的**
+
+      - **这是因为默认情况下，只允许单向的数据流动（Parent -> Component）如果确实需要更改传入的数据，有两种场景以及方法**
+
+        - Component只想在本组件内使用并改变数据的值，不对外界产生影响
+
+          <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;    <span class="attr">props</span>:[        <span class="string">&#x27;name&#x27;</span>,        <span class="string">&#x27;phoneNumber&#x27;</span>,        <span class="string">&#x27;email&#x27;</span>    ],    <span class="function"><span class="title">data</span>(<span class="params"></span>)</span> &#123;        <span class="keyword">return</span> &#123;            <span class="attr">detailsEnable</span>: <span class="literal">true</span>,            <span class="attr">phone_number</span>: <span class="built_in">this</span>.phoneNumber        &#125;;    &#125;,    <span class="attr">methods</span>: &#123;        showDetails () &#123;            <span class="built_in">this</span>.detailsEnable = !<span class="built_in">this</span>.detailsEnable;        &#125;    &#125;&#125;);</span><br></pre></td></tr></table></figure>
+
+          - 将props变量作为初始值传递给data属性即可
+
+        - Component想改变传入的数据的值，并且告知Parent此改变应该是逆向的（由Component-> Parent）
+
+          - 后续介绍，使用custom event
+
+    - **因为props中的字符串会被绑定为全局变量的属性，因此注意其不应与data中定义的属性产生冲突**
+
+  - 除了以字符串数组的形式提供props之外，还可以以对象的形式提供，这为props进行了限制，比方说类型限制，是否必须等等，就像是定义函数的形参，这使得vue程序可以更加健壮
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">props: &#123;        <span class="attr">name</span>: <span class="built_in">String</span>,        <span class="attr">phoneNumber</span>: &#123;            <span class="attr">type</span>: <span class="built_in">String</span>,            <span class="attr">required</span>: <span class="literal">true</span>        &#125;,        <span class="attr">email</span>: &#123;            <span class="attr">type</span>: <span class="built_in">String</span>,            <span class="attr">required</span>: <span class="literal">false</span>,            <span class="comment">// default: &#x27;0&#x27;             default: ():string =&gt; &#123;return &#x27;0&#x27;&#125;,            validator: (value: string): boolean =&gt; &#123;                if (value.length &gt; 10) &#123;                    return false;                &#125;                return true;            &#125;        &#125;    &#125;</span></span><br></pre></td></tr></table></figure>
+
+    - **注意在ts中string是小写的，而在js中这里指定的数据类型就是js中原生的String构造器，包括Boolean亦是如此**
+
+    - default在required为false时提供（不是必须的），可以直接设置默认值，也可以设置一个返回默认值的函数
+
+    - validator用来验证数据的合法性
+
+      - **如果是非法参数或者说没有提供必需的（required）属性或者类型不匹配的话，会在浏览器的控制台终端输出Vue Warn**
+
+        <img src="http://images.demoli.xyz/image-20210120230506460.png" alt="image-20210120230506460" style="zoom:67%;" />![image-20210120231547007](http://images.demoli.xyz/image-20210120231547007.png)
+
+        ![image-20210120231547007](http://images.demoli.xyz/image-20210120231547007.png)
+
+    - 支持的type包括
+
+      - String
+
+      - Number
+
+      - Boolean
+
+      - Array
+
+      - Object
+
+      - Date
+
+      - Function
+
+      - Symbol
+
+      - 其他构造器啊函数比如Date，或自定义class类型
+
+      - **此处本有一个疑惑props作为HTML中的一个属性，怎么可能传如非string得数据呢，任何数据在HTML属性中都会被解析为string，但是我忽略了之前的一个vue特性 v-bind:，被bind的属性（可以是HTML的默认的属性，也可以是Vue提供的属性，比如key 也可以是自定义的props属性！！）的值可以是js expression，换句话说被bind的属性的值不会被默认当做string，而是js expression，如果要表示string，需要用单引号括起来！**
+
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul v-else :style=&quot;&#123;display: isHidden? &#x27;none&#x27;:&#x27;&#x27;&#125;&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+        - none是string，是对象中display属性的一个可能的值
+
+- 为props绑定动态数据
+
+  - 即使用v-bind，此时就可以向component传递非string类型的动态数据了
+
+  - 除了上述的特性，因为绑定了动态数据，所以可以使用v-for来渲染列表了（其实是使用v-for来渲染component）
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;ul&gt;    &lt;!-- 在 main APP 中引入component的方法 --&gt;    &lt;friend-list v-for=&quot;friend in friendList&quot; :key=&quot;friend.id&quot; :name=&quot;friend.name&quot; :phone-number=&quot;friend.phone&quot; :email=&quot;friend.email&quot;&gt;&lt;/friend-list&gt;  &lt;/ul&gt;&lt;/template&gt;&lt;script src=&quot;./App.ts&quot; lang=&quot;ts&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+- Prop / Event Fallthrough
+
+  - 此特性的意思就是对于component中没有定义的prop或事件，也可以在调用component的template中使用
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--base-button.vue--&gt;&lt;template&gt;    &lt;button&gt;    &lt;slot&gt;&lt;/slot&gt;  &lt;/button&gt;&lt;/template&gt; &lt;script&gt;export default &#123;&#125;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--App.vue--&gt;&lt;base-button type=&quot;submit&quot; @click=&quot;doSomething&quot;&gt;Click me&lt;/base-button&gt;</span><br></pre></td></tr></table></figure>
+
+    - **尽管component中没有定义type prop与click event，但是component中的template的根节点button有这些属性，所以添加到component上的type属性与click事件会自动添加到button标签上，而不用显式的定义**
+    - 可以通过`this.$attrs`来访问这些自动添加的prop
+
+- Binding all Props
+
+  - 在Template中使用components时可以单独的设置每一个prop
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;ul&gt;    &lt;friend-list v-for=&quot;friend in friendList&quot; :key=&quot;friend.id&quot; :name=&quot;friend.name&quot; :phone-number=&quot;friend.phoneNumber&quot; :email=&quot;friend.email&quot;&gt;&lt;/friend-list&gt;  &lt;/ul&gt;&lt;/template&gt;&lt;script src=&quot;./App.ts&quot; lang=&quot;ts&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+  - 但是如果传入的所有prop都是一个对象的属性的话，可以只传递这个对象，因此可以简化代码，使用v-bind即可（**此时v-bind不在标签属性上使用，而是直接使用**）
+
+    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;ul&gt;    &lt;friend-list v-for=&quot;friend in friendList&quot; :key=&quot;friend.id&quot; v-bind=&quot;friend&quot;&gt;&lt;/friend-list&gt;  &lt;/ul&gt;&lt;/template&gt;&lt;script src=&quot;./App.ts&quot; lang=&quot;ts&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+    - **需要注意的是，因为是接受一个对象并将对象的属性与component中的props绑定，所以对象的属性名应该与props中定义的属性名完全对应一致**
+
+### 使用Custom Events从component向Main Vue APP 传递数据
+
+- 类似于原生的HTML中，button被点击后会回调一个点击事件让用户处理，components也可以在内部执行回调方法（或者说触发一个自定义的事件），并以此告知Main Vue App （需要执行监听），某些数据需要被更改
+
+- 使用`this.$emit`（vue内置属性）
+
+  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// inner component// 触发事件// 1. 事件名称的格式应当是a-b的形式// 2. 可以添加任意数量的参数作为事件触发时携带的数据// 在component被Main App调用的template中，可以使用@click这样的属性来监听此事件 @toggle-favoritethis.$emit(&#x27;toggle-favorite&#x27;, this.id);</span></span><br></pre></td></tr></table></figure>
+
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--App.vue--&gt;&lt;template&gt;  &lt;ul&gt;    &lt;!-- 在 main APP 中引入component的方法 --&gt;    &lt;friend-list      v-for=&quot;friend in friendList&quot;      :id=&quot;friend.id&quot;      :key=&quot;friend.id&quot;      :name=&quot;friend.name&quot;      :phone-number=&quot;friend.phone&quot;      :email=&quot;friend.email&quot;      :is-favorite=&quot;friend.isFavorite&quot;      @toggle-favorite=&quot;changeFavorite&quot;    &gt;&lt;/friend-list&gt;  &lt;/ul&gt;&lt;/template&gt;&lt;script src=&quot;./App.ts&quot; lang=&quot;ts&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Main Vue Appexport default defineComponent (&#123;    methods: &#123;        // 这里与普通的事件回调函数不一样，前边的内置的事件回调函数，如果不指定参数会自动传递event,但是这里直接传递数据        changeFavorite(friendID: number) &#123;            const specificFriend = this.friendList.find((friend) =&gt; friend.id === friendID)!;            specificFriend.isFavorite = !specificFriend.isFavorite        &#125;    &#125;&#125;)</span></span><br></pre></td></tr></table></figure>
+
+  - **对于上边代码中的注释的解释,实际上，此处触发函数的friendID就是`$event`，验证方式是，将触发函数的调用处，不接受默认参数，而是` @toggle-favorite="changeFavorite($event, 1)"`，此时触发函数中打印的第一个参数也就是$event就是friendID的值-----在下边的`cmp-communication-08-a-potential-problem-starting-setup`项目中这一点会更加明确**
+
+    - 传递的参数只有1个的时候，`$event`指向的就是第一个参数，此时可以方便的向触发函数中加入自己的自定义参数，`@delete-friend="deleteFriend($event, userDefined)"`；但是如果component内事件传输的参数有多个，如何获得全部的参数？
+      - 可以更改事件传递参数的形式:`<button @click="$emit('delete-friend', &#123;id: id, name: name&#125;)">Delete</button>`此时数据被包含在对象中传递给$event，进而可以在回调函数中解析使用
+      - 或者使用arguments，参考[自定义事件传参问题](https://github.com/vuejs/vue/issues/5735)，**但是自己并没有搞懂如何实现。。。。。。。。。。。。。！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！1**
+
+  - **最牛逼的在于在Main Vue App 中更改完毕的数据会被侦测到并自动重新传递给component，并重新渲染，此时数据完成了其双向的流动**
+
+  - **与prop类似，component内部定义的event也相当于是component向外部提供的一个接口，为了保证component的可复用性，除了在component config object中使用props属性来声明数据之外，还可以使用emits属性来声明本组件会触发的事件，以供外部监听使用**
+
+    <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;    <span class="comment">// props:[&#x27;name&#x27;, &#x27;phoneNumber&#x27;, &#x27;email&#x27;],    props: &#123;        id: &#123;            type: Number,            required: true        &#125;,        name: String,        phoneNumber: &#123;            type: String,            required: true        &#125;,        email: &#123;            type: String,            required: true        &#125;,        isFavorite: Boolean    &#125;,    // emits: [&#x27;toggle-favorite&#x27;],    emits: &#123;        // 事件名称作为key        // validator函数作为值        // validator函数的参数就是事件触发携带的数据参数        &#x27;toggle-favorite&#x27;: (id: number) =&gt; &#123;            if (id) &#123;                return true;            &#125; else &#123;                console.error(&#x27;id is missing&#x27;);                return false;            &#125;        &#125;    &#125;,  methods: &#123;        showDetails () &#123;            this.detailsEnable = !this.detailsEnable;        &#125;,        toggleFavorite() &#123;            this.$emit(&#x27;toggle-favorite&#x27;, this.id);        &#125;    &#125;</span></span><br></pre></td></tr></table></figure>
+
+    
+
+### 使用Component的Demo
+
+- component不仅仅是一个可以复用的数据渲染机器，也可以收集用户输入的复用组件，并根据业务需求将用户输入传递给Main Vue App（数据管理的所在地，只在Main Vue App与server进行数据交互）
+
+  - 之所以总的数据管理都放在Main Vue App中，是因为只有这个App 可以和所有component沟通，二如果放到component中，不仅与Main App沟通相对困难，与其他component甚至暂时还没有办法沟通
+
+- **Potential Poblem章节有一个demo工程，推荐看看源码，套娃使用component，工程名字叫做`cmp-communication-08-a-potential-problem-starting-setup`**
+
+  - **注意，在此demo中，所有的component在Main Vue App中注册，但是他们互相之间可以调用，也即意味着被调用的componet与调用者（不管是Main Vue App还是其他component）都是用相同的方式进项两个方向的沟通的（props与custom event）**
+
+    - **父组件与子组件的关系**
+
+    - 在demo中，`select-topic`这个事件经过了多个component的传导，而且`topics`数据也经过了多个component的传导，这实际上没有太大必要（KnowledgeBase这个组件完全没有用到topics数据）
+
+    - 但是实际上传导过程中的中间`component`，只是进行了传导却并没有用到数据，如何避免这种不必要的传导呢
+
+      - 使用**provide/inject特性**，这两个实际上都是Config Object的属性，配合使用
+
+        - **只能inject父组件中provide的数据！！**
+
+          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--父组件--&gt;export default &#123;		data () &#123;&#125;,		methods: &#123;&#125;,		provide: &#123;      // 向子组件直接提供topics这个数据      topics:  [          &#123;            id: &#x27;basics&#x27;,            title: &#x27;The Basics&#x27;,            description: &#x27;Core Vue basics you have to know&#x27;,            fullText:              &#x27;Vue is a great framework and it has a couple of key concepts: Data binding, events, components and reactivity - that should tell you something!&#x27;,          &#125;,          &#123;            id: &#x27;components&#x27;,            title: &#x27;Components&#x27;,            description:              &#x27;Components are a core concept for building Vue UIs and apps&#x27;,            fullText:              &#x27;With components, you can split logic (and markup) into separate building blocks and then combine those building blocks (and re-use them) to build powerful user interfaces.&#x27;,          &#125;,        ]  &#125;,&#125;&lt;!--另一种provide方式： 父组件，为了暴露父组件中的data属性--&gt;provide() &#123;    return &#123;      topics: this.topics    &#125;;  &#125;&lt;!--子组件--&gt;export default &#123;  // props: [&#x27;topics&#x27;],  emits: [&#x27;select-topic&#x27;],  // 注入父组件暴露的数据  inject: [&#x27;topics&#x27;]&#125;;</span><br></pre></td></tr></table></figure>
+
+    - 事件的传导也是没有必要的
+
+      - 与数据传导类似的，事件的传导也可以借助provide/inject机制实现点对点的传导（**函数也可以作为值传递**）
+
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;li&gt;    &lt;h3&gt;&#123;&#123; topicName &#125;&#125;&lt;/h3&gt;    &lt;p&gt;&#123;&#123; description &#125;&#125;&lt;/p&gt;    &lt;!-- &lt;button @click=&quot;$emit(&#x27;select-topic&#x27;, id)&quot;&gt;Learn More&lt;/button&gt; --&gt;    &lt;button @click=&quot;selectTopic(id)&quot;&gt;Learn More&lt;/button&gt;  &lt;/li&gt;&lt;/template&gt;&lt;script&gt;export default &#123;  props: [&#x27;id&#x27;, &#x27;topicName&#x27;, &#x27;description&#x27;],  // emits: [&#x27;select-topic&#x27;],  // 注入回调函数  inject: [&#x27;selectTopic&#x27;]&#125;;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+        
+
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">provide</span>(<span class="params"></span>)</span> &#123;  <span class="keyword">return</span> &#123;    <span class="attr">topics</span>: <span class="built_in">this</span>.topics,    <span class="comment">// 把回调函数的引用作为数据进行暴露    selectTopic: this.activateTopic  &#125;;&#125;,  methods: &#123;    activateTopic(topicId) &#123;      this.activeTopic = this.topics.find((topic) =&gt; topic.id === topicId);    &#125;,  &#125;,</span></span><br></pre></td></tr></table></figure>
+
+  - 合理使用**provide/inject特性**，props与custom event仍然应当是默认的组件交流方式，只有当数据或事件经过了超过两个以上的中间组件的状态下才需要使用**provide/inject特性**
+
+    - **为什么会有这些中间组件呢，因为组件的设计是为了复用（这些中间组件都有自己的模板与相应的功能），当组件关系确定后，底层组件如果要和最高级的组件进行沟通，可能会经过一系列无关的中间组件**
+
+  - **上边讲述了父子组件之间的沟通方法，那么兄弟组件呢，即有共同父组件的子组件，此时应当将数据托管到父组件，通过父组件进行兄弟组件之间的数据交换**
+
+### Diving Deeper into Components
+
+1. component的注册方式
+
+   1. `Global Components`
+
+      <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span>;<span class="keyword">import</span> TheHeader <span class="keyword">from</span> <span class="string">&#x27;./components/TheHeader.vue&#x27;</span>;<span class="keyword">import</span> BaseBadge <span class="keyword">from</span> <span class="string">&#x27;./components/BaseBadge.vue&#x27;</span>;<span class="keyword">import</span> BadgeList <span class="keyword">from</span> <span class="string">&#x27;./components/BadgeList.vue&#x27;</span>;<span class="keyword">import</span> UserInfo <span class="keyword">from</span> <span class="string">&#x27;./components/UserInfo.vue&#x27;</span>;<span class="keyword">const</span> app = createApp(App);app.component(<span class="string">&#x27;the-header&#x27;</span>, TheHeader);app.component(<span class="string">&#x27;base-badge&#x27;</span>, BaseBadge);app.component(<span class="string">&#x27;badge-list&#x27;</span>, BadgeList);app.component(<span class="string">&#x27;user-info&#x27;</span>, UserInfo);app.mount(<span class="string">&#x27;#app&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+      1. 可以在Vue App 中的任意一个Template中使用全局注册的组件，此时组件之间也可以互相调用（调用陷阱），父子关系混乱，组件的使用灵活自由，但是容易出问题
+
+         <img src="http://images.demoli.xyz/image-20210122135930043.png" alt="image-20210122135930043" style="zoom:50%;" />
+
+      2. App初始化加载的时候需要下载全部的组件的代码并加载，即便部分组件暂时不会使用或者很少使用
+
+      3. 对于被多个组件使用的组件可以注册为全剧组件
+
+   2. Local Components
+
+      1. 所谓的本地组件就是在component内部注册的组件，或者说是在父组件中注册的组件，此时该注册的子组件只能在当前的组件的Template中使用
+      2. 仅被少数几个组件使用的组件应注册为本地组件
+
+2. Local Style
+
+   1. 默认的vue中使用`<style>`标签加载的样式是全局生效的，可以通过加参数`scoped`构造仅在当前component内生效的样式
+
+      <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;style scoped&gt;section &#123;  margin: 2rem auto;  max-width: 30rem;  border-radius: 12px;  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);  padding: 1rem;&#125;section div &#123;  display: flex;  justify-content: space-between;  align-items: center;&#125;&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+      - 对于App.vue内部定义的样式一般可以设置为全局，因为往往定义注入html标签与body标签或者一些全局的样式
+
+   2. Vue是如何实现local style的
+
+      ![image-20210122143409264](http://images.demoli.xyz/image-20210122143409264.png)
+
+      ![image-20210122143523011](http://images.demoli.xyz/image-20210122143523011.png)
+
+      - 通过设置自定义属性来作为selector为特定的组件分配本地的样式
+
+3. slots
+
+   1. 此组件特性实际对应着一种特殊的组件用法：**包装组件**，比如卡片组件
+
+      <img src="http://images.demoli.xyz/image-20210122144423784.png" alt="image-20210122144423784" style="zoom:80%;" />
+
+      - 比如上述图中的卡片组件，卡片组件作为一种包装类型的组件，其内部需要嵌套其他的组件，当然这种包装类型的组件可能更多的只是只含有一些样式的组件，可以写到全局样式中，使用包装类型显然更规范，那么如何使得包装类型内部可以嵌套其他内容或组件呢（之前的组件都是独立堆叠使用的，不会嵌套包装使用）
+
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BaseCard组件&lt;template&gt;    &lt;div&gt;        &lt;slot&gt;&lt;/slot&gt;    &lt;/div&gt;&lt;/template&gt;&lt;style scoped&gt;div &#123;  margin: 2rem auto;  max-width: 30rem;  border-radius: 12px;  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);  padding: 1rem;&#125;&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;base-card&gt;    &lt;div&gt;      &lt;h3&gt;&#123;&#123; fullName &#125;&#125;&lt;/h3&gt;      &lt;base-badge :type=&quot;role&quot; :caption=&quot;role.toUpperCase()&quot;&gt;&lt;/base-badge&gt;    &lt;/div&gt;    &lt;p&gt;&#123;&#123; infoText &#125;&#125;&lt;/p&gt;  &lt;/base-card&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+        - **核心在于slot标签，与props属性类似，后者用来接受父组件的数据，slot标签用于接收父组件的HTML标签**
+
+      - Slot Name
+
+        - 对于包装组件来说，除了定义好样式之外，其模板的结构未必是单一的结构，如果其模板也有相对复杂的结构的话，就需要有多个slot，将父模板的HTML标签置入到指定的slot中去，这需要使用`slot name`进行区分
+
+          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;    &lt;div&gt;        &lt;header&gt;            &lt;slot name=&quot;header&quot;&gt;&lt;/slot&gt;        &lt;/header&gt;        &lt;slot&gt;&lt;/slot&gt;    &lt;/div&gt;&lt;/template&gt;&lt;style scoped&gt;div &#123;  margin: 2rem auto;  max-width: 30rem;  border-radius: 12px;  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);  padding: 1rem;&#125;&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+          - 如果有多个slot可以留一个slot不进行命名，作为默认slot
+
+            <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;base-card&gt;    &lt;template v-slot:header&gt;      &lt;h3&gt;&#123;&#123; fullName &#125;&#125;&lt;/h3&gt;      &lt;base-badge :type=&quot;role&quot; :caption=&quot;role.toUpperCase()&quot;&gt;&lt;/base-badge&gt;    &lt;/template&gt;    &lt;p&gt;&#123;&#123; infoText &#125;&#125;&lt;/p&gt;  &lt;/base-card&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+            - 使用包装组件时，将包装组件内部的内容按照slot进行划分，使用template+v-slot属性（**必须是template标签**）将对应的内容对应到指定名字的slot中，其余没有指定的部分被默认归置到默认slot中
+
+              - 更好的做法是显式的将剩余部分规划到默认slot中
+
+                <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;base-card&gt;    &lt;template v-slot:header&gt;      &lt;h2&gt;Available Badges&lt;/h2&gt;    &lt;/template&gt;    &lt;template v-slot:default&gt;      &lt;ul&gt;        &lt;li&gt;          &lt;base-badge type=&quot;admin&quot; caption=&quot;ADMIN&quot;&gt;&lt;/base-badge&gt;        &lt;/li&gt;        &lt;li&gt;          &lt;base-badge type=&quot;author&quot; caption=&quot;AUTHOR&quot;&gt;&lt;/base-badge&gt;        &lt;/li&gt;      &lt;/ul&gt;    &lt;/template&gt;  &lt;/base-card&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+                - **`v-slot:`的简写方式是`#`**
+
+              - 当包装组件内部只有一个slot，或者说父组件只想使用包装组件内部的一个slot时：
+
+                <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;base-card #header1&gt;      &lt;h3&gt;&#123;&#123; fullName &#125;&#125;&lt;/h3&gt;      &lt;base-badge :type=&quot;role&quot; :caption=&quot;role.toUpperCase()&quot;&gt;&lt;/base-badge&gt;  &lt;/base-card&gt;</span><br></pre></td></tr></table></figure>
+
+                - **可以直接把`v-slot`属性写到组件标签上，并且不用再使用Template标签**
+
+          - 关于使用slot中的样式的问题
+
+            - 一如之前所说的style的作用范围，在包装组件的父组件中定义的样式可以影响到父组件往包装组件内部的slot传输的HTML标签的样式，但是无法影响包装组件内部slot所在的HTML标签的样式
+
+          - slot的默认值，当父组件没有向slot中传输HTML的时候，将展示slot的默认内容
+
+            <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;    &lt;div&gt;        &lt;header&gt;            &lt;slot name=&quot;header&quot;&gt;                &lt;h2&gt;The Default Content&lt;/h2&gt;            &lt;/slot&gt;        &lt;/header&gt;        &lt;slot&gt;&lt;h2&gt;The Default Content&lt;/h2&gt;&lt;/slot&gt;    &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+          - 当父组件没有使用包装组件内部的slot的时候，除了可以展示默认值之外，还可以通过`$slots`来判断父组件有没有向对应的slot传递内容，并结合`v-if`来条件渲染slot所在的标签
+
+            <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;    &lt;div&gt;        &lt;header&gt;            &lt;slot name=&quot;header&quot;&gt;            &lt;/slot&gt;        &lt;/header&gt;        &lt;slot&gt;&lt;h2&gt;The Default Content&lt;/h2&gt;&lt;/slot&gt;    &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+            - 如上例所示，如果父组件没有使用header这个slot，那么实际的渲染过程中会有一个空的header被渲染出来，为了避免空标签的渲染（不是很大的问题，但是可以规范点），可以使用`$slots`进行判断
+
+              <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent (&#123;    mounted () &#123;        <span class="built_in">console</span>.log(<span class="built_in">this</span>.$slots.header);        <span class="built_in">console</span>.log(<span class="built_in">this</span>.$slots.default);    &#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+              - 可以在包装组件内部使用`this.slots.slot_name`来获知该slot有没有被父组件使用，如果没有则值为undefined
+
+                <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;    &lt;div&gt;        &lt;header v-if=&quot;$slots.header&quot;&gt;            &lt;slot name=&quot;header&quot;&gt;                &lt;!-- &lt;h2&gt;The Default Content&lt;/h2&gt; --&gt;            &lt;/slot&gt;        &lt;/header&gt;        &lt;slot&gt;&lt;h2&gt;The Default Content&lt;/h2&gt;&lt;/slot&gt;    &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+          - scoped slots
+
+            - 场景：
+
+              <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;    &lt;ul&gt;        &lt;li v-for=&quot;goal in goals&quot; :key=&quot;goal&quot;&gt; &#123;&#123;goal&#125;&#125;&lt;/li&gt;    &lt;/ul&gt;&lt;/template&gt;&lt;script lang=&quot;ts&quot;&gt;import &#123;defineComponent&#125; from &#x27;vue&#x27;;export default defineComponent (&#123;    data() &#123;        return &#123;            goals: [&#x27;ts&#x27;, &#x27;vue&#x27;, &#x27;java&#x27;]        &#125;    &#125;  &#125;)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+              - 有如上的组件，对于便利的`&#123;&#123;goal&#125;&#125;</code>希望能</strong>让父组件为其添加独特的样式**，而不只是纯字符串输出，比如加个标签比如<code>&lt;h2&gt;&#123;&#123;goal&#125;&#125;&lt;/h2&gt;</code>.此时可以使用slot</p>
+<pre><code>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CourseGoal组件&lt;template&gt;    &lt;ul&gt;        &lt;li v-for=&quot;goal in goals&quot; :key=&quot;goal&quot;&gt;            &lt;slot name=&quot;goal&quot;&gt;&lt;/slot&gt;&gt;        &lt;/li&gt;    &lt;/ul&gt;&lt;/template&gt;父组件&lt;template&gt;    &lt;course-goals &gt;      &lt;template #goal&gt;				&lt;h2&gt;&lt;/h2&gt;			&lt;/template&gt;    &lt;/course-goals&gt;  &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+    - 此时的问题在于，遍历的goal变量只能在本组件的`v-for`内部使用，那么父组件中的定制样式如何加到这个goal变量中呢？使用scoped slot **其实就是将子组件中的变量暴露到父组件中，从而使得父组件可以将定制样式加入到这个包装组件的slot中**
+
+      <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CourseGoal组件&lt;template&gt;    &lt;ul&gt;        &lt;li v-for=&quot;goal in goals&quot; :key=&quot;goal&quot;&gt;            &lt;slot name=&quot;goal&quot; :item=&quot;goal&quot; anotherProp=&#x27;.....&#x27;&gt;&lt;/slot&gt;&gt;        &lt;/li&gt;    &lt;/ul&gt;&lt;/template&gt;父组件&lt;template&gt;  &lt;div&gt;    &lt;course-goals &gt;      &lt;template #goal=&quot;goals&quot;&gt;        &lt;h2&gt;&#123;&#123;goals.item&#125;&#125;&lt;/h2&gt;        &lt;h2&gt;&#123;&#123;goals.anotherProp&#125;&#125;&lt;/h2&gt;      &lt;/template&gt;    &lt;/course-goals&gt;  &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+      - 在子组件内部的slot中定义的属性与其值都会被加载到一个对象中并传递给父组件中`v-slot:slotName=&#39;var&#39;`的var变量中，因此在父组件中可以通过var来获得数据，并放置到定制样式中
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>动态Component</p>
+<ul>
+<li><p>场景：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;div&gt;    &lt;the-header&gt;&lt;/the-header&gt;    &lt;button @click=&quot;setSelectedComponent(&#x27;manage-goals&#x27;)&quot;&gt;Manage Goals&lt;/button&gt;    &lt;button @click=&quot;setSelectedComponent(&#x27;active-goals&#x27;)&quot;&gt;Active Goals&lt;/button&gt;    &lt;manage-goals v-if=&quot;selectedComponent === &#x27;manage-goals&#x27;&quot;&gt;&lt;/manage-goals&gt;    &lt;active-goals v-if=&quot;selectedComponent === &#x27;active-goals&#x27;&quot;&gt;&lt;/active-goals&gt;  &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>想按照按键的选择来选择性的展示某个组件，可以使用<code>v-if</code>但是当组件变得过多后，使用<code>v-if</code>比较变得很繁琐，使用动态Component来解决这个问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;div&gt;    &lt;the-header&gt;&lt;/the-header&gt;    &lt;button @click=&quot;setSelectedComponent(&#x27;manage-goals&#x27;)&quot;&gt;Manage Goals&lt;/button&gt;    &lt;button @click=&quot;setSelectedComponent(&#x27;active-goals&#x27;)&quot;&gt;Active Goals&lt;/button&gt;    &lt;component :is=&quot;selectedComponent&quot;&gt;&lt;/component&gt;  &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>component</code>标签是vue提供的标签，可以展示其is属性的值所对应的注册的组件，上边的案例等价于使用<code>v-if</code></li>
+</ul>
+</li>
+<li><p>动态component的保活（状态维护）</p>
+<ul>
+<li><p>场景</p>
+<ul>
+<li><p>基于上述的场景，如果一个组件中有用户输入这种含状态的标签，如果用户输入完成在触发保存前，使用动态component切换后，之前的输入状态将完全丢失，因为之前的component被完全销毁了，如何维持住之前的状态呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;div&gt;    &lt;the-header&gt;&lt;/the-header&gt;    &lt;button @click=&quot;setSelectedComponent(&#x27;manage-goals&#x27;)&quot;&gt;Manage Goals&lt;/button&gt;    &lt;button @click=&quot;setSelectedComponent(&#x27;active-goals&#x27;)&quot;&gt;Active Goals&lt;/button&gt;    &lt;keep-alive&gt;      &lt;component :is=&quot;selectedComponent&quot;&gt;&lt;/component&gt;    &lt;/keep-alive&gt;      &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用keep-alive标签，在此标签内部的动态component组件在被替换时会缓存状态，而不是完全删除</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>使用component实现自定义的提示框</p>
+<ul>
+<li><p>默认的alert比较丑，使用component定义自定义样式的提示框</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ErrorAlert.vue&lt;template&gt;    &lt;dialog open&gt;        &lt;slot name=&quot;dialog&quot;&gt;&lt;/slot&gt;    &lt;/dialog&gt;&lt;/template&gt;&lt;style scoped&gt;    dialog &#123;        position: fixed;        top: 20vh;        left: 30%;        width: 40%;        background-color: white;        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);        padding: 1 rem;    &#125;&lt;/style&gt;父组件&lt;template&gt;  &lt;div&gt;    &lt;h2&gt;Manage Goals&lt;/h2&gt;    &lt;input type=&quot;text&quot; ref=&quot;goal&quot; /&gt;    &lt;button @click=&quot;addGoal&quot;&gt;add Goal&lt;/button&gt;    &lt;error-alert v-if=&quot;!isInputGoalValid&quot; #dialog&gt;        &lt;h2&gt;Input is invalid&lt;/h2&gt;        &lt;p&gt;enter some charactors&lt;/p&gt;        &lt;button @click=&quot;confirmError&quot;&gt;OK&lt;/button&gt;    &lt;/error-alert&gt;  &lt;/div&gt;&lt;/template&gt;&lt;script&gt;import ErrorAlert from &#x27;./ErrorAlert.vue&#x27;export default &#123;  data() &#123;    return &#123;      isInputGoalValid: true,    &#125;;  &#125;,  components: &#123;      ErrorAlert  &#125;,  methods: &#123;    addGoal() &#123;      if (this.$refs.goal.value === &#x27;&#x27;) &#123;        this.isInputGoalValid = false;      &#125;    &#125;,    confirmError () &#123;        this.isInputGoalValid = true;    &#125;  &#125;,&#125;;&lt;/script&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>自定义的提示框目前隶属于父组件的div标签，但是实际上如果此提示框组件作为一个body标签下的根组件更好（<strong>不这样设置也无所谓，但是这样设置的标签结构更合理</strong>），如何实现呢，使用<code>teleport</code>即可，与<code>keep-alive</code>标签类似，是vue提供的一个包装标签</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;  &lt;div&gt;    &lt;h2&gt;Manage Goals&lt;/h2&gt;    &lt;input type=&quot;text&quot; ref=&quot;goal&quot; /&gt;    &lt;button @click=&quot;addGoal&quot;&gt;add Goal&lt;/button&gt;    &lt;teleport to=&quot;body&quot;&gt;      &lt;error-alert v-if=&quot;!isInputGoalValid&quot; #dialog&gt;        &lt;h2&gt;Inut is invalid&lt;/h2&gt;        &lt;p&gt;enter some charactors&lt;/p&gt;        &lt;button @click=&quot;confirmError&quot;&gt;OK&lt;/button&gt;      &lt;/error-alert&gt;    &lt;/teleport&gt;  &lt;/div&gt;&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>to属性使用css selector指定要将teleport内部的标签内容渲染到什么位置，如上例，会渲染到body标签的末尾</li>
+<li>使用此标签可以指定将内部的组件渲染到特定的位置，组件仍可以使用当前所在父组件的数据或者方法，但是渲染的位置由teleport决定</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>component中的fragment概念</p>
+<ul>
+<li>在vue2中，component模板中只能有一个根标签，根标签下可以有多个子标签，但是在vue3中，没有此限制，若果没有样式限制的需求的话，完全可以有多个跟标签，这叫做fragment</li>
+</ul>
+</li>
+</ul>
+<h2 id="Learning-Resources-App-Demo-amp-Components知识整理"><a href="#Learning-Resources-App-Demo-amp-Components知识整理" class="headerlink" title="Learning Resources App Demo &amp; Components知识整理"></a>Learning Resources App Demo &amp; Components知识整理</h2><ul>
+<li><p>样式是可以继承的，当我使用包装组件的时候，如果被包装的组件没有定义任何样式（<strong>必须是根本没有style标签或者有style标签但是没有scoped属性的情况，如果有style标签且为scoped，即便内容为空，也不会产生覆盖的行为</strong>），那么被包装组件中的标签会继承包装组件中对于同名标签定义的样式</p>
+</li>
+<li><p>Demo App的模块划分设计（<strong>不能仅仅从样式上划分模块，也要从功能，数据的分割的角度上去划分模块</strong>）</p>
+<ul>
+<li>App组件<ul>
+<li>LearngingResources组件 专门对每一个Resource的内容做展示（<strong>对于列表中的每一项肯定是要单独做个组件出来的</strong>）<ul>
+<li>使用props接受数据并渲染</li>
+</ul>
+</li>
+<li>StoredResources组件 将for循环与ul也放到一个单独的组件，目的在于<strong>让App.vue精简，并且内部只包含全局的样式而没有其他局部样式，所以一般会把所有的HTML默认标签都移出App.vue到一个新的组件中</strong></li>
+</ul>
+</li>
+<li>卡片组件 全局</li>
+<li>Button组件 全局<ul>
+<li>Button组件除了提供slot供使用者设置button的内容（甚至可以放图标）也提供了button的样式选择，<strong>这里突出的是组件的可复用性，组件就像是函数或API是提供服务用的，应该保证足够的定制化与实用性</strong></li>
+</ul>
+</li>
+<li>TheHeader组件</li>
+<li>tab组件<ul>
+<li>卡片组件</li>
+<li>用户输入组件<ul>
+<li>带输入鉴定</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Components的种类</p>
+<ul>
+<li>包装组件<ul>
+<li>案例：<ul>
+<li>比如卡片样式</li>
+<li><img src="http://images.demoli.xyz/image-20210122144423784.png" alt="image-20210122144423784" style="zoom:80%;" /></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>特性：<ul>
+<li>此种组件更多包含的是卡片的样式与结构</li>
+</ul>
+</li>
+<li>使用的Vue特性<ul>
+<li>slot<ul>
+<li>slot name</li>
+<li>scoped slot</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>数据渲染组件：</p>
+<ul>
+<li>案例：<ul>
+<li>li标签内部的数据展示，放在此组件内部</li>
+</ul>
+</li>
+<li>Vue特性<ul>
+<li>props</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>中间组件</p>
+<ul>
+<li>一般会调用数据渲染组件，作为App组件与数据渲染组件的中间件，一般是为了与App组件做切割保证App组件轻量而分离出的组件</li>
+<li>Vue特性<ul>
+<li>props</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>从功能上分：</p>
+<ul>
+<li>layouts<ul>
+<li>TheHeader</li>
+<li>TheFooter</li>
+</ul>
+</li>
+<li>UI<ul>
+<li>BaseCard</li>
+<li>TheButton<ul>
+<li>事件穿透</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>业务数据</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vue/" rel="tag"># vue</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/11/pypi%E7%A7%81%E6%9C%89%E6%BA%90%E9%83%A8%E7%BD%B2/" rel="prev" title="pypi私有源部署">
+      <i class="fa fa-chevron-left"></i> pypi私有源部署
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/07/11/ts%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="ts学习笔记">
+      ts学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Vue%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">Vue学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue%E5%BC%95%E5%85%A5"><span class="nav-number">1.1.</span> <span class="nav-text">Vue引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AADemo%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.2.</span> <span class="nav-text">第一个Demo项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BA%AFJS%E5%AE%8C%E6%88%90"><span class="nav-number">1.2.1.</span> <span class="nav-text">使用纯JS完成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Vue%E5%AE%8C%E6%88%90"><span class="nav-number">1.2.2.</span> <span class="nav-text">使用Vue完成</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Install-Vue-CLI-%E5%A6%82%E6%9E%9C%E5%B0%9A%E6%9C%AA%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">1. Install Vue CLI, 如果尚未安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E9%A1%B9%E7%9B%AE-%E9%80%89%E6%8B%A9-%E2%80%9CManually-select-features%E2%80%9D-%E9%80%89%E9%A1%B9"><span class="nav-number">3.</span> <span class="nav-text">2. 创建一个新项目, 选择 “Manually select features” 选项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E9%80%89%E6%8B%A9choose-Vue-cersion%E4%B8%8Etypescript%EF%BC%8C%E5%85%B6%E4%BD%99%E5%85%A8%E9%83%A8%E5%8F%96%E6%B6%88"><span class="nav-number">4.</span> <span class="nav-text">3. 选择choose Vue cersion与typescript，其余全部取消</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E9%80%89%E6%8B%A9vue-3-x-useclass-style-component-syntax-%E9%80%89%E6%8B%A9y"><span class="nav-number">5.</span> <span class="nav-text">4. 选择vue 3.x useclass-style component syntax 选择y</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-Use-Babel-alongside-TypeScript-required-for-modern-mode-auto-detected-polyfills-transpiling-JSX-%E9%80%89%E6%8B%A9n"><span class="nav-number">6.</span> <span class="nav-text">5. Use Babel alongside TypeScript (required for modern mode, auto-detected polyfills, transpiling JSX)? 选择n</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-Where-do-you-prefer-placing-config-for-Babel-ESLint-etc-%E6%94%BE%E5%9C%A8package-json%E4%B8%AD"><span class="nav-number">7.</span> <span class="nav-text">6. Where do you prefer placing config for Babel, ESLint, etc.? 放在package.json中</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-%E5%8F%AF%E4%BB%A5%E8%80%83%E8%99%91%E5%B0%86%E4%B8%8A%E8%BF%B0%E7%9A%84%E9%80%89%E6%8B%A9%E9%85%8D%E7%BD%AE%E4%BF%9D%E5%AD%98%E5%9C%A8%E4%B8%80%E4%B8%AA%E8%87%AA%E5%91%BD%E5%90%8D%E7%9A%84%E6%A8%A1%E6%9D%BF%E9%85%8D%E7%BD%AE%E4%B8%AD%EF%BC%8C%E6%AD%A4%E5%90%8E%E5%9C%A8%E6%AD%A5%E9%AA%A42%E5%B0%B1%E5%8F%AF%E4%BB%A5%E9%80%89%E6%8B%A9%E4%BA%86"><span class="nav-number">8.</span> <span class="nav-text">7. 可以考虑将上述的选择配置保存在一个自命名的模板配置中，此后在步骤2就可以选择了</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%9C%A8%E7%94%A8%E6%88%B7%E6%A0%B9%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84-vuerc%E6%96%87%E4%BB%B6%E4%B8%AD%E8%AE%BE%E7%BD%AE%E6%98%AF%E5%90%A6%E4%BD%BF%E7%94%A8%E6%B7%98%E5%AE%9D%E9%95%9C%E5%83%8F%E6%BA%90"><span class="nav-number">9.</span> <span class="nav-text">8. 需要注意，可以在用户根目录下的.vuerc文件中设置是否使用淘宝镜像源</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
