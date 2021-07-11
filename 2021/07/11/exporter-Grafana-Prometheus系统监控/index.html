@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://lh3.googleusercontent.com/Y014MRf9ESaKzQDTpnXj9WwyDgLAEIvBV_0BfYbMd57Dhm6Bt9PG8KPA3X1PYfu9x2Aw3EN3_LaGZo-u_rKoV1mngEqIfOtKkY0I7fp-LnZxxsEAudGS6LruV1XgJ48Js8KbG7Bj">
 <meta property="og:image" content="https://lh4.googleusercontent.com/rm0EnLb7R6lBDMvXSa7UjtonyarFQ1OjYKUPhBQL9JhZbITnPFeosKQ3FtNuZpxIJkEKAuymkxviLm8MWWq2eM6oR9ps9-2r5BdQ3QYQccM12gGf10xhyNLVNolxj3UPf32ZYqJr">
 <meta property="article:published_time" content="2021-07-11T07:12:10.000Z">
-<meta property="article:modified_time" content="2021-07-11T07:13:00.550Z">
+<meta property="article:modified_time" content="2021-07-11T07:31:57.343Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="node_expoter,Grafana,Prometheus">
 <meta name="twitter:card" content="summary">
@@ -193,7 +193,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-07-11 15:12:10 / Modified: 15:13:00" itemprop="dateCreated datePublished" datetime="2021-07-11T15:12:10+08:00">2021-07-11</time>
+              <time title="Created: 2021-07-11 15:12:10 / Modified: 15:31:57" itemprop="dateCreated datePublished" datetime="2021-07-11T15:12:10+08:00">2021-07-11</time>
             </span>
 
           
@@ -213,6 +213,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">sudo useradd --no-create-home --shell /bin/<span class="literal">false</span> node_exporter \</span><br><span class="line">&amp;&amp; <span class="built_in">cd</span> /opt &amp;&amp; wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz \</span><br><span class="line">&amp;&amp; tar xvf node_exporter-0.18.1.linux-amd64.tar.gz \</span><br><span class="line">&amp;&amp; sudo mv node_exporter-0.18.1.linux-amd64 /opt/node_exporter \</span><br><span class="line">&amp;&amp; sudo chown node_exporter:node_exporter /opt/node_exporter -R \</span><br><span class="line">&amp;&amp; sudo touch /etc/systemd/system/node_exporter.service \</span><br><span class="line">&amp;&amp; sudo <span class="built_in">echo</span> <span class="string">&#x27;[Unit]</span></span><br><span class="line"><span class="string">Description=Node Exporter</span></span><br><span class="line"><span class="string">Wants=network-online.target</span></span><br><span class="line"><span class="string">After=network-online.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">User=node_exporter</span></span><br><span class="line"><span class="string">Group=node_exporter</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">ExecStart=/opt/node_exporter/node_exporter --collector.systemd</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target&#x27;</span> &gt; /etc/systemd/system/node_exporter.service \</span><br><span class="line">&amp;&amp; sudo systemctl daemon-reload  \</span><br><span class="line">&amp;&amp; sudo systemctl <span class="built_in">enable</span> node_exporter \</span><br><span class="line">&amp;&amp; sudo systemctl start node_exporter \</span><br><span class="line">&amp;&amp; sudo journalctl -f --unit node_exporter</span><br></pre></td></tr></table></figure>
 
 <p>安装完成后访问：<code>http://$&#123;host&#125;:9100/</code>，确认服务正常启动，如下图所示：</p>
+<span id="more"></span>
+
 <p><img src="https://lh3.googleusercontent.com/Y014MRf9ESaKzQDTpnXj9WwyDgLAEIvBV_0BfYbMd57Dhm6Bt9PG8KPA3X1PYfu9x2Aw3EN3_LaGZo-u_rKoV1mngEqIfOtKkY0I7fp-LnZxxsEAudGS6LruV1XgJ48Js8KbG7Bj" alt="img"></p>
 <h1 id="2-安装Prometheus时间序列数据库"><a href="#2-安装Prometheus时间序列数据库" class="headerlink" title="2 安装Prometheus时间序列数据库"></a>2 安装Prometheus时间序列数据库</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0a4acb61ce35">Prometheus</a>通过基于HTTP的pull方式采集时序数据，可以通过服务发现或者静态配置去获取要采集的目标服务器，支持单主节点工作，支持多种可视化图表及仪表盘。</p>
 <p>在<strong>中控节点</strong>安装Prometheus，一键安装脚本：</p>

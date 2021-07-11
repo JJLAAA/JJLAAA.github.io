@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://images.demoli.xyz/image-20210314234123950.png">
 <meta property="article:published_time" content="2021-07-11T07:09:03.000Z">
-<meta property="article:modified_time" content="2021-07-11T07:09:34.110Z">
+<meta property="article:modified_time" content="2021-07-11T07:32:13.949Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="OpenResty">
 <meta name="twitter:card" content="summary">
@@ -192,7 +192,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-07-11 15:09:03 / Modified: 15:09:34" itemprop="dateCreated datePublished" datetime="2021-07-11T15:09:03+08:00">2021-07-11</time>
+              <time title="Created: 2021-07-11 15:09:03 / Modified: 15:32:13" itemprop="dateCreated datePublished" datetime="2021-07-11T15:09:03+08:00">2021-07-11</time>
             </span>
 
           
@@ -222,6 +222,8 @@
 </li>
 <li>下面列举几个常见场景的Nginx配置</li>
 </ul>
+<span id="more"></span>
+
 <h3 id="静态文件（页面）服务器配置"><a href="#静态文件（页面）服务器配置" class="headerlink" title="静态文件（页面）服务器配置"></a>静态文件（页面）服务器配置</h3><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="comment"># 以dvclab.com作为主网站域名，完全匹配</span></span><br><span class="line">    <span class="attribute">server_name</span> <span class="variable">$&#123;hostname&#125;</span>;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span>  https://<span class="variable">$&#123;hostname&#125;</span><span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">443</span>;</span><br><span class="line">    <span class="attribute">server_name</span>  <span class="variable">$&#123;hostname&#125;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ssl证书文件位置(常见证书文件格式为：crt/pem)</span></span><br><span class="line">    <span class="attribute">ssl_certificate</span>      /etc/nginx/ssl/<span class="variable">$&#123;hostname&#125;</span>.pem;</span><br><span class="line">       </span><br><span class="line">    <span class="comment"># ssl证书key位置</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span>  /etc/nginx/ssl/<span class="variable">$&#123;hostname&#125;</span>.key;</span><br><span class="line">  </span><br><span class="line">    <span class="attribute">ssl_session_timeout</span>  <span class="number">10m</span>;</span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span>  <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">root</span>        /etc/nginx/dist;</span><br><span class="line">    <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
