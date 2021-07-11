@@ -20,33 +20,28 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="pip私有源部署1 需求分析 私有开发源：开发团队需要方便的python私有包发布机制  私有镜像源：自建官方源镜像，提升访问速度，规避偶然网络问题，方便离线环境的私有化部署   2 使用Docker部署PypiServer服务器2.1 下载PypiServer镜像1docker pull pypiserver&#x2F;pypiserver  2.2 生成Auth信息12345678# 安装依赖apt-g">
-<meta property="og:type" content="article">
-<meta property="og:title" content="pypi私有源部署">
-<meta property="og:url" content="http://example.com/2021/07/11/pypi%E7%A7%81%E6%9C%89%E6%BA%90%E9%83%A8%E7%BD%B2/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/page/2/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="pip私有源部署1 需求分析 私有开发源：开发团队需要方便的python私有包发布机制  私有镜像源：自建官方源镜像，提升访问速度，规避偶然网络问题，方便离线环境的私有化部署   2 使用Docker部署PypiServer服务器2.1 下载PypiServer镜像1docker pull pypiserver&#x2F;pypiserver  2.2 生成Auth信息12345678# 安装依赖apt-g">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-07-11T07:01:55.000Z">
-<meta property="article:modified_time" content="2021-07-11T07:03:32.368Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="pypi">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2021/07/11/pypi%E7%A7%81%E6%9C%89%E6%BA%90%E9%83%A8%E7%BD%B2/">
+<link rel="canonical" href="http://example.com/page/2/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : false,
-    isPost : true,
+    isHome : true,
+    isPost : false,
     lang   : 'en'
   };
 </script>
 
-  <title>pypi私有源部署 | Hexo</title>
+  <title>Hexo</title>
   
 
 
@@ -159,10 +154,9 @@
         <div class="content-wrap">
           
 
-          <div class="content post posts-expand">
+          <div class="content index posts-expand">
             
-
-    
+      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
@@ -178,9 +172,10 @@
       <meta itemprop="name" content="Hexo">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          pypi私有源部署
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/07/11/pypi%E7%A7%81%E6%9C%89%E6%BA%90%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">pypi私有源部署</a>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -204,7 +199,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="pip私有源部署"><a href="#pip私有源部署" class="headerlink" title="pip私有源部署"></a>pip私有源部署</h1><h2 id="1-需求分析"><a href="#1-需求分析" class="headerlink" title="1 需求分析"></a>1 需求分析</h2><ul>
+          <h1 id="pip私有源部署"><a href="#pip私有源部署" class="headerlink" title="pip私有源部署"></a>pip私有源部署</h1><h2 id="1-需求分析"><a href="#1-需求分析" class="headerlink" title="1 需求分析"></a>1 需求分析</h2><ul>
 <li><p>私有开发源：开发团队需要方便的python私有包发布机制</p>
 </li>
 <li><p>私有镜像源：自建官方源镜像，提升访问速度，规避偶然网络问题，方便离线环境的私有化部署</p>
@@ -249,34 +244,25 @@
 </li>
 </ul>
 
+      
     </div>
 
     
     
     
-
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/pypi/" rel="tag"># pypi</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item"></div>
-      <div class="post-nav-item">
-    <a href="/2021/07/11/vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="vue学习笔记">
-      vue学习笔记 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
+        <div class="post-eof"></div>
       </footer>
-    
   </article>
   
   
   
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
 
 
 
@@ -328,7 +314,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pip%E7%A7%81%E6%9C%89%E6%BA%90%E9%83%A8%E7%BD%B2"><span class="nav-number">1.</span> <span class="nav-text">pip私有源部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="nav-number">1.1.</span> <span class="nav-text">1 需求分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BD%BF%E7%94%A8Docker%E9%83%A8%E7%BD%B2PypiServer%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2 使用Docker部署PypiServer服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%B8%8B%E8%BD%BDPypiServer%E9%95%9C%E5%83%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 下载PypiServer镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%94%9F%E6%88%90Auth%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 生成Auth信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%AE%B9%E5%99%A8%E9%83%A8%E7%BD%B2"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 容器部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 Nginx反向代理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%89%E8%A3%85bandersnatch%E6%9C%AC%E5%9C%B0%E6%BA%90%E5%90%8C%E6%AD%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.</span> <span class="nav-text">3 安装bandersnatch本地源同步工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%9C%AC%E6%9C%BA%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 本机配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 nginx反向代理配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%8F%82%E8%80%83"><span class="nav-number">1.4.</span> <span class="nav-text">5 参考</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
