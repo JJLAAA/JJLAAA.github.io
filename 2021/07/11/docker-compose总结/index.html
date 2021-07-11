@@ -20,28 +20,33 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Long March">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="什么是Docker Compose 一个应用往往由多个容器组合构成，分别管理过于繁琐，在单机、容器数量比较多的情况下，应该使用Docker Compose进行容器编排组织 Docker Compose是一个用来定义和运行复杂应用的Docker工具（在单机进行编排） Docker Compose 通过一个配置文件来管理多个Docker容器，在配置文件中，所有的容器通过services来定义，然后使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker-compose总结">
+<meta property="og:url" content="http://example.com/2021/07/11/docker-compose%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Long March">
+<meta property="og:description" content="什么是Docker Compose 一个应用往往由多个容器组合构成，分别管理过于繁琐，在单机、容器数量比较多的情况下，应该使用Docker Compose进行容器编排组织 Docker Compose是一个用来定义和运行复杂应用的Docker工具（在单机进行编排） Docker Compose 通过一个配置文件来管理多个Docker容器，在配置文件中，所有的容器通过services来定义，然后使用">
 <meta property="og:locale">
+<meta property="article:published_time" content="2021-07-11T08:36:14.000Z">
+<meta property="article:modified_time" content="2021-07-11T08:36:29.075Z">
 <meta property="article:author" content="Leo">
+<meta property="article:tag" content="docker-compose">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2021/07/11/docker-compose%E6%80%BB%E7%BB%93/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh'
   };
 </script>
 
-  <title>Long March</title>
+  <title>docker-compose总结 | Long March</title>
   
 
 
@@ -154,187 +159,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/docker-%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E9%83%A8%E7%BD%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/docker-%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">docker 私有仓库部署</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 16:36:49 / Modified: 16:37:15" itemprop="dateCreated datePublished" datetime="2021-07-11T16:36:49+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
 
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Docker私有仓库部署"><a href="#Docker私有仓库部署" class="headerlink" title="Docker私有仓库部署"></a>Docker私有仓库部署</h1><h2 id="0-需求"><a href="#0-需求" class="headerlink" title="0 需求"></a>0 需求</h2><ul>
-<li><p>构建Docker私有仓库可避免开发生产时可能产生的网络问题；</p>
-</li>
-<li><p>使用Docker Registry私有仓库部署，使用Docker Auth做身份验证</p>
-</li>
-<li><p>考虑到使用场景：发布镜像一般需要认证，拉取镜像则不需要，不同环境也需要不同的访问策略。简单的http验证扩展能力受限，<a target="_blank" rel="noopener" href="https://github.com/cesanta/docker_auth"><strong>docker_auth</strong></a>提供了基于token的docker registry验证实现方式，可以更好的支持实际场景：</p>
-<ul>
-<li>支持第三方用户认证</li>
-<li>支持较为丰富ACL策略配置</li>
-<li>配置部署易于上手</li>
-</ul>
-</li>
-</ul>
-<p>本文经过作者亲自验证，如果读者实践时出错，欢迎在评论区指出</p>
-<h2 id="1-Docker安装"><a href="#1-Docker安装" class="headerlink" title="1. Docker安装"></a>1. Docker安装</h2><h2 id="1-1-清除旧Docker安装痕迹"><a href="#1-1-清除旧Docker安装痕迹" class="headerlink" title="1.1 清除旧Docker安装痕迹"></a>1.1 清除旧Docker安装痕迹</h2><p><strong>如果是第一次安装，可以略过此步骤</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove docker docker-engine docker.io containerd runc</span><br><span class="line"></span><br><span class="line">sudo apt-get purge docker-ce docker-ce-cli containerd.io</span><br><span class="line">sudo rm -rf /var/lib/docker</span><br></pre></td></tr></table></figure>
-
-<h3 id="1-2-安装Docker"><a href="#1-2-安装Docker" class="headerlink" title="1.2 安装Docker"></a>1.2 安装Docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://get.docker.com -o get-docker.sh</span><br><span class="line">sudo sh get-docker.sh</span><br><span class="line">sudo usermod -aG docker</span><br></pre></td></tr></table></figure>
-
-<p>更多安装方法参考<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/ubuntu/">Install Docker Engine on Ubuntu</a></p>
-<h3 id="1-3-Docker-配置"><a href="#1-3-Docker-配置" class="headerlink" title="1.3 Docker 配置"></a>1.3 Docker 配置</h3><ul>
-<li><p>配置阿里云镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo tee /etc/docker/daemon.json &lt;&lt; <span class="string">eof</span></span><br><span class="line"><span class="string">&#123; </span></span><br><span class="line"><span class="string">&quot;registry-mirrors&quot;: [&quot;https://jioksect.mirror.aliyuncs.com&quot;] </span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">eof</span> </span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="2-Docker-Auth-安装部署"><a href="#2-Docker-Auth-安装部署" class="headerlink" title="2 Docker Auth 安装部署"></a>2 Docker Auth 安装部署</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /opt/docker_auth/config /opt/docker_auth/<span class="built_in">log</span> &amp;&amp; touch /opt/docker_auth/config/auth_config.yml</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;</span></span><br><span class="line"><span class="string">server:  </span></span><br><span class="line"><span class="string">  addr: &quot;:5001&quot;  </span></span><br><span class="line"><span class="string">  certificate: &quot;/root/cert.pem&quot;  </span></span><br><span class="line"><span class="string">  key: &quot;/root/cert.key&quot;</span></span><br><span class="line"><span class="string">token:  </span></span><br><span class="line"><span class="string">  issuer: &quot;Auth Service&quot;  </span></span><br><span class="line"><span class="string">  expiration: 900</span></span><br><span class="line"><span class="string">users:  </span></span><br><span class="line"><span class="string">  &quot;root&quot;:    </span></span><br><span class="line"><span class="string">  password: &quot;$&#123;passwd&#125;&quot;    </span></span><br><span class="line"><span class="string">  &quot;&quot;: &#123;&#125;</span></span><br><span class="line"><span class="string">acl:  </span></span><br><span class="line"><span class="string">  - match: &#123;account: &quot;root&quot;&#125;    </span></span><br><span class="line"><span class="string">  actions: [&quot;*&quot;]  </span></span><br><span class="line"><span class="string">  - match: &#123;account: &quot;&quot;&#125; # 匿名用户只能拉取镜像</span></span><br><span class="line"><span class="string">  actions: [&quot;pull&quot;]&#x27;</span> &gt; /opt/docker_auth/config/auth_config.yml</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li><code>$&#123;passwd&#125;</code>生成方式<ol>
-<li>用户密码生成方式：<code>htpasswd -nB root</code><ol>
-<li><code>htpasswd -nB root</code>执行时要求输入的密码就是<code>docker login</code>时输入的<code>root</code>用户密码</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>更多配置方式参考：<a target="_blank" rel="noopener" href="https://github.com/cesanta/docker_auth/blob/master/examples/reference.yml">docker_auth配置示例</a></li>
-</ol>
-<p>部署容器</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -d  \</span><br><span class="line">--name=docker_auth \ </span><br><span class="line">-p <span class="variable">$&#123;port&#125;</span>:5001 \ </span><br><span class="line">--restart=always \  </span><br><span class="line">-v /opt/docker_auth/config:/config:ro \  </span><br><span class="line">-v /root/cert.pem:/root/cert.pem:ro \  </span><br><span class="line">-v /root/cert.key:/root/cert.key:ro \  </span><br><span class="line">-v /opt/docker_auth/<span class="built_in">log</span>:/logs \</span><br><span class="line">cesanta/docker_auth:1.6.0 --v=2 --alsologtostderr /config/auth_config.yml</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>注意：<strong>如果要将Docker镜像服务做成公网服务的话，需要将Docker Auth的服务端口同样暴露到公网（可以使用frp暴露），因为执行<code>docker login</code>命令时，会向Docker Auth发起验证请求</strong></li>
-</ul>
-<h2 id="3-Docker-Registry镜像安装与容器配置"><a href="#3-Docker-Registry镜像安装与容器配置" class="headerlink" title="3 Docker Registry镜像安装与容器配置"></a>3 Docker Registry镜像安装与容器配置</h2><h3 id="3-1-拉取Docker-Registry镜像"><a href="#3-1-拉取Docker-Registry镜像" class="headerlink" title="3.1 拉取Docker Registry镜像"></a>3.1 拉取Docker Registry镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry:2.7.0</span><br><span class="line">mkdir -p /opt/docker_registry/config /opt/docker_registry/data &amp;&amp; touch /opt/docker_registry/config/config.yml</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-2-设置配置文件"><a href="#3-2-设置配置文件" class="headerlink" title="3.2 设置配置文件"></a>3.2 设置配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;version: 0.1</span></span><br><span class="line"><span class="string">log:  </span></span><br><span class="line"><span class="string">  fields:    </span></span><br><span class="line"><span class="string">    service: registry</span></span><br><span class="line"><span class="string">storage:  </span></span><br><span class="line"><span class="string">  delete:    </span></span><br><span class="line"><span class="string">    enabled: true  </span></span><br><span class="line"><span class="string">  cache:    </span></span><br><span class="line"><span class="string">    blobdescriptor: inmemory  </span></span><br><span class="line"><span class="string">  filesystem:    </span></span><br><span class="line"><span class="string">    rootdirectory: /var/lib/registry</span></span><br><span class="line"><span class="string">auth:  </span></span><br><span class="line"><span class="string">  token:    </span></span><br><span class="line"><span class="string">    autoredirect: true    </span></span><br><span class="line"><span class="string">    realm: $&#123;docker_auth_url&#125;/auth   </span></span><br><span class="line"><span class="string">    service: Docker registry    </span></span><br><span class="line"><span class="string">    issuer: Auth Service    </span></span><br><span class="line"><span class="string">    rootcertbundle: /root/cert.pem</span></span><br><span class="line"><span class="string">http:  </span></span><br><span class="line"><span class="string">  addr: :5000  </span></span><br><span class="line"><span class="string">  tls:    </span></span><br><span class="line"><span class="string">    certificate: /root/cert.pem    </span></span><br><span class="line"><span class="string">    key: /root/cert.key  </span></span><br><span class="line"><span class="string">  headers:    </span></span><br><span class="line"><span class="string">    X-Content-Type-Options: [nosniff]</span></span><br><span class="line"><span class="string">health:  </span></span><br><span class="line"><span class="string">  storagedriver:    </span></span><br><span class="line"><span class="string">    enabled: true    </span></span><br><span class="line"><span class="string">    interval: 10s</span></span><br><span class="line"><span class="string">threshold: 3&#x27;</span> &gt; /opt/docker_registry/config/config.yml</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p><strong>${docker_auth_url}即为Docker Auth服务的公网地址</strong>，</p>
-<ul>
-<li>注意如果Docker Auth使用与Docker Registry Nginx相同的证书的话，注意这里的**${docker_auth_url}**要使用证书对应的域名而不要使用公网IP，否则在<code>docker login</code>时会出现签名错误</li>
-</ul>
-</li>
-<li><p><strong>Docker Auth</strong>默认提供的是HTTPS服务，所以**${docker_auth_url}**应当使用HTTPS协议</p>
-</li>
-<li><p><strong>证书可以从阿里云免费申请</strong></p>
-</li>
-</ul>
-<h3 id="3-3-启动服务"><a href="#3-3-启动服务" class="headerlink" title="3.3 启动服务"></a>3.3 启动服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \ </span><br><span class="line">-p <span class="variable">$&#123;port&#125;</span>:5000 \</span><br><span class="line">--restart=always \  </span><br><span class="line">--name=registry \</span><br><span class="line">-v /opt/docker_registry/config/:/etc/docker/registry/ \</span><br><span class="line">-v /opt/docker_registry/data:/var/lib/registry \</span><br><span class="line">-v /root/cert.pem:/root/cert.pem:ro \  </span><br><span class="line">-v /root/cert.key:/root/cert.key:ro \</span><br><span class="line">registry:2.3</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>可使用frp暴露Docker Registry服务</li>
-</ul>
-<h3 id="3-4-使用Nginx提供HTTPS服务"><a href="#3-4-使用Nginx提供HTTPS服务" class="headerlink" title="3.4 使用Nginx提供HTTPS服务"></a>3.4 使用Nginx提供HTTPS服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;server &#123;    listen          443 ssl;    server_name     $&#123;host_name&#125;;    #ssl证书文件位置(常见证书文件格式为：crt/pem)    ssl_certificate      /etc/nginx/ssl/registry-cert.pem;    #ssl证书key位置    ssl_certificate_key  /etc/nginx/ssl/registry-cert.key;    ssl_session_timeout  10m;    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;    ssl_prefer_server_ciphers  on;    location / &#123;         proxy_set_header  Host  $host;         proxy_set_header  X-Forwarded-Proto $scheme;         proxy_set_header  X-Forwarded-For $host;         proxy_set_header  X-Real-IP $remote_addr;         # 可使用frp暴露内网服务         proxy_pass    https://$&#123;host_name&#125;;    &#125;&#125;&#x27;</span> &gt;&gt; /opt/nginx/dockerRegistry.conf</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>使用Docker 容器部署Nginx服务即可</p>
-</li>
-<li><p>在Nginx服务HTTPS 服务使用的证书可以是Docker Auth服务使用的同一套证书</p>
-</li>
-</ul>
-<h2 id="4-（可选）使用docker-compose一键部署Docker私有仓库服务"><a href="#4-（可选）使用docker-compose一键部署Docker私有仓库服务" class="headerlink" title="4 （可选）使用docker-compose一键部署Docker私有仓库服务"></a>4 （可选）使用docker-compose一键部署Docker私有仓库服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;version: &#x27;</span>3.7<span class="string">&#x27;services:  auth:    image: cesanta/docker_auth:1.6.0    volumes:       - /opt/docker_auth/config:/config:ro       - /opt/docker_auth/log:/logs       - /opt/docker_auth/ssl/registry-cert.pem:/root/cert.pem:ro       - /opt/docker_auth/ssl/registry-cert.key:/root/cert.key:ro    container_name: docker_auth    restart: always    command: --v=2 --alsologtostderr /config/auth_config.yml    ports:       - $&#123;auth_port&#125;:5001  docker_registry:    image: registry:2.3    container_name: registry    depends_on:      - auth    ports:       - $&#123;registry_port&#125;:5000    volumes:      - /opt/docker_registry/config:/etc/docker/registry      - /opt/docker_registry/data:/var/lib/registry      - /opt/docker_auth/ssl/registry-cert.pem:/root/cert.pem:ro      - /opt/docker_auth/ssl/registry-cert.key:/root/cert.key:ro    restart: always&#x27;</span> &gt;&gt; /opt/docker_registry/registry.yamlcd /opt/docker_registry &amp;&amp; docker-compose -f registry.yaml up -d</span><br></pre></td></tr></table></figure>
-
-<h2 id="5-使用Docker私有仓库服务"><a href="#5-使用Docker私有仓库服务" class="headerlink" title="5 使用Docker私有仓库服务"></a>5 使用Docker私有仓库服务</h2><h3 id="5-1-开启HTTP形式访问私有仓库"><a href="#5-1-开启HTTP形式访问私有仓库" class="headerlink" title="5.1 开启HTTP形式访问私有仓库"></a>5.1 开启HTTP形式访问私有仓库</h3><p><code>vim /etc/docker/daemon.json</code></p>
-<p>在json结构中添加如下节点</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;   <span class="attr">&quot;insecure-registries&quot;</span>:    [ <span class="string">&quot;$&#123;registry_hostname&#125;:$&#123;port&#125;&quot;</span>] &#125;</span><br></pre></td></tr></table></figure>
-
-<p>重启Docker服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reloadsystemctl restart docker</span><br></pre></td></tr></table></figure>
-
-<h3 id="5-2-尝试使用私有仓库服务"><a href="#5-2-尝试使用私有仓库服务" class="headerlink" title="5.2 尝试使用私有仓库服务"></a>5.2 尝试使用私有仓库服务</h3><h4 id="5-2-1-推送镜像"><a href="#5-2-1-推送镜像" class="headerlink" title="5.2.1 推送镜像"></a>5.2.1 推送镜像</h4><ol>
-<li>登录到自己的私有仓库</li>
-</ol>
-<p><code>docker login $&#123;registry_hostname&#125;:$&#123;port&#125;</code></p>
-<ol start="2">
-<li>为镜像打上正确的tag（若不打合适的tag的话，会默认提交到DockerHub中）</li>
-</ol>
-<p><code>docker tag [OPTIONS] IMAGE[:TAG] [REGISTRYHOST/][USERNAME/]NAME[:TAG]</code></p>
-<p>eg：<code>docker tag myApp:v1 localhost:8080/myname/myApp:v1</code></p>
-<ol start="3">
-<li>推送镜像</li>
-</ol>
-<p><code>docker push [OPTIONS] NAME[:TAG]</code></p>
-<p>eg：<code>docker push localhost:8080/myname/myApp:v1</code></p>
-<ol start="4">
-<li>如果使用的是DockerHub仓库的服务的话<ol>
-<li><code>docker login --username username</code></li>
-<li><code>docker tag my-image username/my-repo</code></li>
-<li><code>docker push username/my-repo</code></li>
-</ol>
-</li>
-</ol>
-<h4 id="5-2-2-拉取镜像"><a href="#5-2-2-拉取镜像" class="headerlink" title="5.2.2 拉取镜像"></a>5.2.2 拉取镜像</h4><p><code>docker pull [OPTIONS] NAME[:TAG]</code> </p>
-<h2 id="6-参考链接"><a href="#6-参考链接" class="headerlink" title="6 参考链接"></a>6 参考链接</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/62531462/docker-local-registry-exec-htpasswd-executable-file-not-found-in-path">docker local registry exec htpasswd executable file not found in $PATH</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/docker/distribution/issues/1874">Private registry push fail: server gave HTTP response to HTTPS client</a></li>
-<li><a target="_blank" rel="noopener" href="https://yeasy.gitbook.io/docker_practice/repository/registry">Docker私有仓库</a></li>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/50167110/docker-push-and-pull-using-separate-credentials">Docker push and pull using separate credentials</a></li>
-<li><a target="_blank" rel="noopener" href="https://qiita.com/zknzfz/items/61909e9a577e1b2a731b">docker_authを使ってプライベートレジストリの権限管理をする</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.51cto.com/407711169/1715733">Docker Registry v2 + Token Auth Server (Registry v2 认证)实例</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.jeepyurongfu.net/blog/68633.html">Docker私有仓库Registry及Auth-server认证搭建</a></li>
-<li><a target="_blank" rel="noopener" href="https://docs.docker.com/registry/configuration/">Configuring a registry</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/SUSE/Portus">https://github.com/SUSE/Portus</a></li>
-</ul>
-<h2 id="7-TODO"><a href="#7-TODO" class="headerlink" title="7 TODO"></a>7 TODO</h2><ul>
-<li>使用Keycloak进行用户验证<ul>
-<li><a target="_blank" rel="noopener" href="https://medium.com/@wilson.wilson/manage-docker-registry-auth-with-keycloak-e0b4356cf7d0">Manage Docker-Registry auth with Keycloak</a></li>
-<li>[Docker Authentication with Keycloak](</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
@@ -350,10 +178,9 @@
       <meta itemprop="name" content="Long March">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/docker-compose%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">docker-compose总结</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          docker-compose总结
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -377,7 +204,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="什么是Docker-Compose"><a href="#什么是Docker-Compose" class="headerlink" title="什么是Docker Compose"></a>什么是Docker Compose</h2><ul>
+        <h2 id="什么是Docker-Compose"><a href="#什么是Docker-Compose" class="headerlink" title="什么是Docker Compose"></a>什么是Docker Compose</h2><ul>
 <li>一个应用往往由多个容器组合构成，分别管理过于繁琐，在单机、容器数量比较多的情况下，应该使用<code>Docker Compose</code>进行容器编排组织</li>
 <li><code>Docker Compose</code>是<strong>一个用来定义和运行复杂应用的Docker工具（在单机进行编排）</strong></li>
 <li><code>Docker Compose</code> 通过一个配置文件来管理多个Docker容器，在配置文件中，所有的容器通过services来定义，然后使用docker-compose命令脚本来启动，停止和重启应用，非常适合组合使用多个容器进行开发的场景。</li>
@@ -687,608 +514,37 @@
 <p><a target="_blank" rel="noopener" href="https://github.com/docker/docker.github.io/blob/master/compose/compose-file/index.md">yaml配置文件的官方介绍</a></p>
 <h1 id="完"><a href="#完" class="headerlink" title="完"></a>完</h1><p>转载自：[Docker-Compose学习使用](</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/docker-compose/" rel="tag"># docker-compose</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/docker-build-kit%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/docker-build-kit%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F/" class="post-title-link" itemprop="url">docker build kit构建镜像</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 16:34:58 / Modified: 16:35:49" itemprop="dateCreated datePublished" datetime="2021-07-11T16:34:58+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Docker安装"><a href="#Docker安装" class="headerlink" title="Docker安装"></a>Docker安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://get.docker.com -o get-docker.sh</span><br><span class="line">sudo sh get-docker.sh</span><br><span class="line">sudo usermod -aG <span class="variable">$&#123;user_name&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="build-kit是什么"><a href="#build-kit是什么" class="headerlink" title="build-kit是什么"></a>build-kit是什么</h2><ul>
-<li>参考<a target="_blank" rel="noopener" href="https://collabnix.com/building-arm-based-docker-images-on-docker-desktop-made-possible-using-buildx/">build ARM based Docker Images</a> </li>
-<li>简单来说就是扩展<code>docker build</code>的一个实验性的功能</li>
-</ul>
-<h2 id="以bind为案例进行构建"><a href="#以bind为案例进行构建" class="headerlink" title="以bind为案例进行构建"></a>以bind为案例进行构建</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/sameersbn/docker-bind">docker-bind</a>项目是一个开源的自定义DNS部署服务，但是并没有提供基于<code>linux/aarch64</code>架构的可用镜像，因此需要自己使用<code>buildx</code>命令执行构建操作<ul>
-<li><strong>在树莓派系统中，执行<code>uname -a</code>来查看自己的目标架构</strong></li>
-</ul>
-</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在树莓派系统中执行如下命令</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/sameersbn/docker-bind.git</span><br><span class="line"><span class="built_in">cd</span> docker-bind</span><br><span class="line"><span class="comment"># 修改Dockerfile内容，注意！！此项设置与docker-bind有关，与build-kit的使用无关，仅做演示用</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;FROM ubuntu:focal-20200423 AS add-apt-repositories</span></span><br><span class="line"><span class="string">COPY jcameron-key.asc jcameron-key.asc</span></span><br><span class="line"><span class="string">RUN apt-get update \</span></span><br><span class="line"><span class="string"> &amp;&amp; DEBIAN_FRONTEND=noninteractive apt-get install -y gnupg \</span></span><br><span class="line"><span class="string"> &amp;&amp; apt-get install -y curl \</span></span><br><span class="line"><span class="string"> &amp;&amp; apt-key adv --fetch-keys https://www.webmin.com/jcameron-key.asc \</span></span><br><span class="line"><span class="string"> &amp;&amp; echo &quot;deb http://download.webmin.com/download/repository sarge contrib&quot; &gt;&gt; /etc/apt/sources.list</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">FROM ubuntu:focal-20200423</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">LABEL maintainer=&quot;sameer@damagehead.com&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ENV BIND_USER=bind \</span></span><br><span class="line"><span class="string">    BIND_VERSION=9.16.1 \</span></span><br><span class="line"><span class="string">    WEBMIN_VERSION=1.970 \</span></span><br><span class="line"><span class="string">    DATA_DIR=/data</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RUN apt-get update \</span></span><br><span class="line"><span class="string">  &amp;&amp; apt-get install -y curl</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">COPY --from=add-apt-repositories /etc/apt/trusted.gpg /etc/apt/trusted.gpg</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">COPY --from=add-apt-repositories /etc/apt/sources.list /etc/apt/sources.list</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RUN rm -rf /etc/apt/apt.conf.d/docker-gzip-indexes \</span></span><br><span class="line"><span class="string"> &amp;&amp; apt-get update \</span></span><br><span class="line"><span class="string"> &amp;&amp; DEBIAN_FRONTEND=noninteractive apt-get install -y \</span></span><br><span class="line"><span class="string">      bind9=1:$&#123;BIND_VERSION&#125;* bind9-host=1:$&#123;BIND_VERSION&#125;* dnsutils \</span></span><br><span class="line"><span class="string">      webmin=$&#123;WEBMIN_VERSION&#125;* \</span></span><br><span class="line"><span class="string"> &amp;&amp; rm -rf /var/lib/apt/lists/*</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">COPY entrypoint.sh /sbin/entrypoint.sh</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RUN chmod 755 /sbin/entrypoint.sh</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">EXPOSE 53/udp 53/tcp 10000/tcp</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ENTRYPOINT [&quot;/sbin/entrypoint.sh&quot;]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">CMD [&quot;/usr/sbin/named&quot;]&#x27;</span> &gt; Dockerfile</span><br><span class="line"><span class="comment"># 登录到自己的docker仓库</span></span><br><span class="line"><span class="comment"># 自己使用的是阿里云的镜像仓库，也可以使用dockerhub官方仓库</span></span><br><span class="line">docker login --username=<span class="variable">$&#123;user_name&#125;</span> registry.cn-hangzhou.aliyuncs.com</span><br><span class="line">docker buildx build --platform linux/aarch64  -t registry.cn-hangzhou.aliyuncs.com/docker-image-lee/<span class="built_in">bind</span>:aarch64 --no-cache --push .</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果是在Mac或Windows上执行构建的话，需要首先执行下述命令</span></span><br><span class="line">docker buildx create --use</span><br></pre></td></tr></table></figure>
-
-<pre><code>- push完成后，就可以在树莓派上拿来用了~
-</code></pre>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><p><a target="_blank" rel="noopener" href="https://collabnix.com/building-arm-based-docker-images-on-docker-desktop-made-possible-using-buildx/">build ARM based Docker Images</a> </p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/commandline/buildx_build/">docker buildx build</a></p>
-</li>
-<li><p>[Build Docker Image for Raspberry Pi](</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/%E4%BD%BF%E7%94%A8docker-compose-%E6%9E%84%E5%BB%BAWordPress%E5%B9%B3%E5%8F%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/%E4%BD%BF%E7%94%A8docker-compose-%E6%9E%84%E5%BB%BAWordPress%E5%B9%B3%E5%8F%B0/" class="post-title-link" itemprop="url">使用docker-compose 构建WordPress平台</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 15:19:44 / Modified: 15:33:11" itemprop="dateCreated datePublished" datetime="2021-07-11T15:19:44+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="使用docker-compose-amp-WordPress建站"><a href="#使用docker-compose-amp-WordPress建站" class="headerlink" title="使用docker-compose &amp;WordPress建站"></a>使用docker-compose &amp;WordPress建站</h1><h2 id="安装docker-compose"><a href="#安装docker-compose" class="headerlink" title="安装docker-compose"></a>安装docker-compose</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L <span class="string">&quot;https://github.com/docker/compose/releases/download/1.28.2/docker-compose-<span class="subst">$(uname -s)</span>-<span class="subst">$(uname -m)</span>&quot;</span> -o /usr/<span class="built_in">local</span>/bin/docker-compose</span><br><span class="line"></span><br><span class="line">sudo chmod +x /usr/<span class="built_in">local</span>/bin/docker-compose</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>如果出现网络问题，直接用浏览器下载可执行文件放到<code>/usr/local/bin</code>目录下即可</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/11/%E4%BD%BF%E7%94%A8docker-compose-%E6%9E%84%E5%BB%BAWordPress%E5%B9%B3%E5%8F%B0/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/GitHub-Actions%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/GitHub-Actions%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/" class="post-title-link" itemprop="url">GitHub Actions使用案例</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 15:18:16 / Modified: 15:33:04" itemprop="dateCreated datePublished" datetime="2021-07-11T15:18:16+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="后端"><a href="#后端" class="headerlink" title="后端"></a>后端</h3><p>后端代码提交后，自动build（使用gradle）打包并将新的可执行jar包部署到指定服务器</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/11/GitHub-Actions%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/11/docker-build-kit%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F/" rel="prev" title="docker build kit构建镜像">
+      <i class="fa fa-chevron-left"></i> docker build kit构建镜像
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/07/11/docker-%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E9%83%A8%E7%BD%B2/" rel="next" title="docker 私有仓库部署">
+      docker 私有仓库部署 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/Jira-Confluence-%E9%83%A8%E7%BD%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/Jira-Confluence-%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">Jira & Confluence 部署</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 15:17:08 / Modified: 15:32:54" itemprop="dateCreated datePublished" datetime="2021-07-11T15:17:08+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Jira-amp-Confluence-服务部署"><a href="#Jira-amp-Confluence-服务部署" class="headerlink" title="Jira &amp; Confluence 服务部署"></a>Jira &amp; Confluence 服务部署</h1><h1 id="1-Jira安装配置"><a href="#1-Jira安装配置" class="headerlink" title="1.  Jira安装配置"></a>1.  Jira安装配置</h1><h2 id="1-1-Jira简介"><a href="#1-1-Jira简介" class="headerlink" title="1.1 Jira简介"></a>1.1 Jira简介</h2><p>JIRA是Atlassian公司出品的项目与事务跟踪工具，被广泛应用于缺陷跟踪、客户服务、需求收集、流程审批、任务跟踪、项目跟踪和敏捷管理等工作领域，其配置灵活、功能全面、部署简单、扩展丰富</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/11/Jira-Confluence-%E9%83%A8%E7%BD%B2/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/k8s%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/k8s%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">k8s学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 15:15:01 / Modified: 15:32:46" itemprop="dateCreated datePublished" datetime="2021-07-11T15:15:01+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="k8s"><a href="#k8s" class="headerlink" title="k8s"></a>k8s</h1><h2 id="什么是k8s"><a href="#什么是k8s" class="headerlink" title="什么是k8s"></a>什么是k8s</h2><ul>
-<li>下边罗列对于k8s的各种描述:<ul>
-<li>Kubernetes 是一款基础设施工具，可对多种不同计算资源（例如虚拟 / 物理机）进行分组，使其呈现为统一的巨量计算资源，从而供应用程序使用或与其他人共享</li>
-<li>Kubernetes 是一个<strong>开源容器编排引擎</strong>，用于自动化容器化应用程序的部署、扩展和管理。<strong>Pod 是 kubernetes 应用程序的基本构建模块</strong>。Kubernetes 管理着 Pod，Pod 封装着容器。一个 Pod 可能包含一个或多个容器、存储、IP 地址，并控制着容器运行。</li>
-<li>k8s的特点：<ul>
-<li>可移植:  支持公有云、私有云、混合云、多重云（multi-cloud）。</li>
-<li>可扩展:  模块化,、插件化、可挂载、可组合。</li>
-<li>自动化:  自动部署、自动重启、自动复制、自动伸缩/扩展。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/11/k8s%E5%AD%A6%E4%B9%A0/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/ssh%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/ssh%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">ssh端口转发配置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 15:14:24 / Modified: 15:32:34" itemprop="dateCreated datePublished" datetime="2021-07-11T15:14:24+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="使用autossh进行端口转发设置"><a href="#使用autossh进行端口转发设置" class="headerlink" title="使用autossh进行端口转发设置"></a>使用autossh进行端口转发设置</h1><h2 id="1-1-端口转发"><a href="#1-1-端口转发" class="headerlink" title="1.1 端口转发"></a>1.1 端口转发</h2><p>ssh端口转发也称作ssh隧道，通过SSH登陆之后，在SSH客户端与SSH服务端之间建立了一个隧道，从而进行通信。SSH隧道是非常安全的，因为SSH是通过加密传输数据的(SSH全称为Secure Shell)</p>
-<h3 id="1-1-1-端口转发分类"><a href="#1-1-1-端口转发分类" class="headerlink" title="1.1.1 端口转发分类"></a>1.1.1 端口转发分类</h3><p>端口转发分为以下3种：</p>
-<ol>
-<li>本地端口转发<ol>
-<li>所谓本地端口转发，就是将发送到本地端口的请求，转发到目标端口。这样，就可以通过访问本地端口，来访问目标端口的服务</li>
-</ol>
-</li>
-<li>远程端口转发<ol>
-<li>所谓远程端口转发，就是将发送到远程端口的请求，转发到目标端口</li>
-</ol>
-</li>
-<li>动态端口转发<ol>
-<li>可用于科学上网，使用远程主机作为proxy，进行请求转发</li>
-</ol>
-</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/11/ssh%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/exporter-Grafana-Prometheus%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/exporter-Grafana-Prometheus%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" class="post-title-link" itemprop="url">exporter+Grafana+Prometheus系统监控</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 15:12:10 / Modified: 15:31:57" itemprop="dateCreated datePublished" datetime="2021-07-11T15:12:10+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本文经过作者亲自验证，如果读者实践时出错，欢迎在评论区指出</p>
-<h1 id="1-安装node-exporter"><a href="#1-安装node-exporter" class="headerlink" title="1 安装node_exporter"></a>1 安装<a target="_blank" rel="noopener" href="https://github.com/prometheus/node_exporter">node_exporter</a></h1><p>目标监控主机操作系统：Ubuntu Server 20.04</p>
-<p>一键安装脚本：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">sudo useradd --no-create-home --shell /bin/<span class="literal">false</span> node_exporter \</span><br><span class="line">&amp;&amp; <span class="built_in">cd</span> /opt &amp;&amp; wget https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz \</span><br><span class="line">&amp;&amp; tar xvf node_exporter-0.18.1.linux-amd64.tar.gz \</span><br><span class="line">&amp;&amp; sudo mv node_exporter-0.18.1.linux-amd64 /opt/node_exporter \</span><br><span class="line">&amp;&amp; sudo chown node_exporter:node_exporter /opt/node_exporter -R \</span><br><span class="line">&amp;&amp; sudo touch /etc/systemd/system/node_exporter.service \</span><br><span class="line">&amp;&amp; sudo <span class="built_in">echo</span> <span class="string">&#x27;[Unit]</span></span><br><span class="line"><span class="string">Description=Node Exporter</span></span><br><span class="line"><span class="string">Wants=network-online.target</span></span><br><span class="line"><span class="string">After=network-online.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">User=node_exporter</span></span><br><span class="line"><span class="string">Group=node_exporter</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">ExecStart=/opt/node_exporter/node_exporter --collector.systemd</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target&#x27;</span> &gt; /etc/systemd/system/node_exporter.service \</span><br><span class="line">&amp;&amp; sudo systemctl daemon-reload  \</span><br><span class="line">&amp;&amp; sudo systemctl <span class="built_in">enable</span> node_exporter \</span><br><span class="line">&amp;&amp; sudo systemctl start node_exporter \</span><br><span class="line">&amp;&amp; sudo journalctl -f --unit node_exporter</span><br></pre></td></tr></table></figure>
-
-<p>安装完成后访问：<code>http://$&#123;host&#125;:9100/</code>，确认服务正常启动，如下图所示：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/11/exporter-Grafana-Prometheus%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/11/Bind%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Leo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Long March">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/11/Bind%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Bind自定义域名解析服务器的使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-11 15:10:50 / Modified: 15:32:26" itemprop="dateCreated datePublished" datetime="2021-07-11T15:10:50+08:00">2021-07-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>使用docker-bind搭建私有的DNS服务器，在整个内网集群中使用域名来管理服务器已经进行服务配置</li>
-<li><strong>以下说明是基于Ubuntu20.04的，如果要构建在树莓派上运行的docker镜像，参考<a target="_blank" rel="noopener" href="https://juejin.cn/post/6932782304075251726">文章</a></strong></li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/11/Bind%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
-  </nav>
 
 
 
@@ -1340,6 +596,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFDocker-Compose"><span class="nav-number">1.</span> <span class="nav-text">什么是Docker Compose</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-Compose%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">Docker Compose的特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">2.1.</span> <span class="nav-text">Linux</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">使用案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%AF%AD%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">配置语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#version"><span class="nav-number">5.</span> <span class="nav-text">version</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-services"><span class="nav-number">6.</span> <span class="nav-text">3.2. services</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-image"><span class="nav-number">6.1.</span> <span class="nav-text">3.2.1. image</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-build"><span class="nav-number">6.2.</span> <span class="nav-text">3.2.2. build</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-command"><span class="nav-number">6.3.</span> <span class="nav-text">3.2.3. command</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-4-container-name"><span class="nav-number">6.4.</span> <span class="nav-text">3.2.4. container_name</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-5-depends-on"><span class="nav-number">6.5.</span> <span class="nav-text">3.2.5. depends_on</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-6-dns"><span class="nav-number">6.6.</span> <span class="nav-text">3.2.6.dns</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-7-environment"><span class="nav-number">6.7.</span> <span class="nav-text">3.2.7. environment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-8-extra-hosts"><span class="nav-number">6.8.</span> <span class="nav-text">3.2.8. extra_hosts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-9-labels%EF%BC%88%E5%B0%B1%E6%98%AF%E7%BB%99%E5%AE%B9%E5%99%A8%E6%89%93%E4%B8%80%E4%B8%AA%E6%A0%87%E7%AD%BE%E6%88%96%E8%80%85%E5%A4%87%E6%B3%A8%EF%BC%8C%E8%A1%A8%E7%A4%BA%E7%89%88%E6%9C%AC%EF%BC%8C%E4%BD%9C%E8%80%85%EF%BC%8C%E6%97%A5%E6%9C%9F%E4%BB%80%E4%B9%88%E7%9A%84%EF%BC%8C%E4%B9%8B%E5%90%8E%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87docker-inspect%E6%9F%A5%E7%9C%8B%EF%BC%89"><span class="nav-number">6.9.</span> <span class="nav-text">3.2.9. labels（就是给容器打一个标签或者备注，表示版本，作者，日期什么的，之后可以通过docker inspect查看）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-10-links"><span class="nav-number">6.10.</span> <span class="nav-text">3.2.10 links</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-11-ports"><span class="nav-number">6.11.</span> <span class="nav-text">3.2.11 ports</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-12-volumes"><span class="nav-number">6.12.</span> <span class="nav-text">3.2.12. volumes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-13-networks"><span class="nav-number">6.13.</span> <span class="nav-text">3.2.13. networks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-14-network-mode"><span class="nav-number">6.14.</span> <span class="nav-text">3.2.14. network_mode</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number"></span> <span class="nav-text">4. 常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-build"><span class="nav-number">1.</span> <span class="nav-text">4.1. build</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-ps"><span class="nav-number">2.</span> <span class="nav-text">4.2. ps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-kill"><span class="nav-number">3.</span> <span class="nav-text">4.3. kill</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-logs"><span class="nav-number">4.</span> <span class="nav-text">4.4. logs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-5-up"><span class="nav-number">5.</span> <span class="nav-text">4.5. up</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-6-create"><span class="nav-number">6.</span> <span class="nav-text">4.6. create</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-7-down"><span class="nav-number">7.</span> <span class="nav-text">4.7. down</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-8-start"><span class="nav-number">8.</span> <span class="nav-text">4.8. start</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-9-stop"><span class="nav-number">9.</span> <span class="nav-text">4.9. stop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-10-pause"><span class="nav-number">10.</span> <span class="nav-text">4.10. pause</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-11-unpause"><span class="nav-number">11.</span> <span class="nav-text">4.11. unpause</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-12-restart"><span class="nav-number">12.</span> <span class="nav-text">4.12. restart</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-13-rm"><span class="nav-number">13.</span> <span class="nav-text">4.13. rm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-14-run"><span class="nav-number">14.</span> <span class="nav-text">4.14. run</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-15-scale"><span class="nav-number">15.</span> <span class="nav-text">4.15. scale</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number"></span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C"><span class="nav-number"></span> <span class="nav-text">完</span></a></div>
       </div>
       <!--/noindex-->
 
