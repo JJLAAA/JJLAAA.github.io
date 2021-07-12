@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Atomic原子类的学习介绍 原子类说简单点就是具有原子&#x2F;原子操作特征的类  所谓原子操作就是指多线程环境下，一旦开始操作就不会被其他线程干扰的操作 使用原子类的优势在于在对对应的数据进行更新的时候不需要加锁，避免使用synchronized的相对较高的开销，也可以实现线程安全（在没有Atomic原子类时，直接使用synchronized包裹来实现数据更新时的原子性，但是开销比较大，而Atomic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Atomic原子类">
+<meta property="og:url" content="http://example.com/2021/07/12/Atomic%E5%8E%9F%E5%AD%90%E7%B1%BB/index.html">
+<meta property="og:site_name" content="Long March">
+<meta property="og:description" content="Atomic原子类的学习介绍 原子类说简单点就是具有原子&#x2F;原子操作特征的类  所谓原子操作就是指多线程环境下，一旦开始操作就不会被其他线程干扰的操作 使用原子类的优势在于在对对应的数据进行更新的时候不需要加锁，避免使用synchronized的相对较高的开销，也可以实现线程安全（在没有Atomic原子类时，直接使用synchronized包裹来实现数据更新时的原子性，但是开销比较大，而Atomic">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://images.demoli.xyz/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d362f4a55432545352538452539462545352541442539302545372542312542422545362541362538322545382541372538382e706e67.png">
+<meta property="article:published_time" content="2021-07-12T14:53:55.000Z">
+<meta property="article:modified_time" content="2021-07-12T14:55:08.876Z">
+<meta property="article:author" content="Lee">
+<meta property="article:tag" content="Java基础-并发编程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.demoli.xyz/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d362f4a55432545352538452539462545352541442539302545372542312542422545362541362538322545382541372538382e706e67.png">
+
+<link rel="canonical" href="http://example.com/2021/07/12/Atomic%E5%8E%9F%E5%AD%90%E7%B1%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Atomic原子类 | Long March</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Long March</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/12/Atomic%E5%8E%9F%E5%AD%90%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Lee">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Long March">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Atomic原子类
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-12 22:53:55 / 修改时间：22:55:08" itemprop="dateCreated datePublished" datetime="2021-07-12T22:53:55+08:00">2021-07-12</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Atomic原子类的学习"><a href="#Atomic原子类的学习" class="headerlink" title="Atomic原子类的学习"></a>Atomic原子类的学习</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><ul>
+<li><p>原子类说简单点就是具有原子/原子操作特征的类</p>
+<ul>
+<li>所谓原子操作就是指多线程环境下，一旦开始操作就不会被其他线程干扰的操作</li>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>使用原子类的优势在于在对对应的数据进行更新的时候不需要加锁，避免使用synchronized的相对较高的开销，也可以实现线程安全（在没有Atomic原子类时，直接使用synchronized包裹来实现数据更新时的原子性，但是开销比较大，而<code>Atomic</code>的出现就是直接在类的基础上进行改造实现更改的原子性</strong>）</span></li>
+</ul>
+</li>
+</ul>
+<span id="more"></span>
+
+<ul>
+<li><p>原子类的位置在<code>java.util.concurrent.atomic</code></p>
+<img src="http://images.demoli.xyz/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d362f4a55432545352538452539462545352541442539302545372542312542422545362541362538322545382541372538382e706e67.png" alt="JUC原子类概览" style="zoom:80%;" />
+
+<ul>
+<li><strong>这个包提供了对于基本类型，数组，引用类型以及对象属性的原子操作操作方法，以保证线程安全，根据可以操作的类型，将原子类分为4类</strong><ul>
+<li>基本类型<ul>
+<li><strong>使用原子的方式更新基本类型</strong><ul>
+<li>AtomicInteger：整型原子类</li>
+<li>AtomicLong：长整型原子类</li>
+<li>AtomicBoolean ：布尔型原子类</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数组类型<ul>
+<li><strong>使用原子的方式更新数组里的某个元素</strong><ul>
+<li>AtomicIntegerArray：整型数组原子类</li>
+<li>AtomicLongArray：长整型数组原子类</li>
+<li>AtomicReferenceArray ：引用类型数组原子类</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>引用类型<span style='color:blue;background:背景颜色;font-size:文字大小;'>（<strong>基本类型原子类只能更新一个变量，如果需要原子更新多个变量（或者说是多个属性），需要使用引用类型原子类</strong>）</span><ul>
+<li>AtomicReference：引用类型原子类</li>
+<li>AtomicMarkableReference：原子更新带有标记的引用类型。该类将 boolean 标记与引用关联起来，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>但是注意不能使用此类型解决ABA问题</strong></span></li>
+<li>AtomicStampedReference ：原子更新带有版本号的引用类型。该类将整数值与引用关联起来，可用于解决原子的更新数据和数据的版本号，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>可以解决使用 CAS 进行原子更新时可能出现的 ABA 问题</strong></span></li>
+</ul>
+</li>
+<li>对象的属性修改类型（其使用场景在于<span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>原子的更改一个已有的类的属性，该类的属性并没有设计成原子类，但是又不至于使用加锁的方式更新，为了折中，就有了<code>FieldUpdater</code>这个原子类</strong></span>）<ul>
+<li>AtomicIntegerFieldUpdater:原子更新整型字段的更新器</li>
+<li>AtomicLongFieldUpdater：原子更新长整型字段的更新器</li>
+<li>AtomicReferenceFieldUpdater：原子更新引用类型里的字段</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><ol>
+<li><p>基本类型的原子类</p>
+<ul>
+<li><p>三种类型的用法基本一致</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">()</span> <span class="comment">//获取当前的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSet</span><span class="params">(<span class="keyword">int</span> newValue)</span><span class="comment">//获取当前的值，并设置新的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndIncrement</span><span class="params">()</span><span class="comment">//获取当前的值，并自增，相当于返回旧的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">incrementAndGet</span><span class="params">()</span><span class="comment">//自增并返回当前的值，相当于返回新的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndDecrement</span><span class="params">()</span> <span class="comment">//获取当前的值，并自减，相当于返回旧的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">decrementAndGet</span><span class="params">()</span> <span class="comment">//自减并获取当前的值，相当于返回新的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAdd</span><span class="params">(<span class="keyword">int</span> delta)</span> <span class="comment">//获取当前的值，并加上预期的值 旧值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">addAndGet</span><span class="params">(<span class="keyword">int</span> delta)</span> <span class="comment">//先加上预期的值再获取当前的值，新值</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> <span class="comment">//如果输入的数值等于预期值，则以原子方式将该值设置为输入值（update）</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">lazySet</span><span class="params">(<span class="keyword">int</span> newValue)</span><span class="comment">//最终设置为newValue,使用 lazySet 设置之后可能导致其他线程在之后的一小段时间内还是可以读到旧的值，但最终的结果还是新的值。</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>compareAndSet</code>方法内部直接调用native方法<span style='color:blue;background:背景颜色;font-size:文字大小;'><code>public final native boolean compareAndSwapInt(Object var1, long var2, int var4, int var5);</code></span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>数组类型的原子类</p>
+<ul>
+<li><p>用法基本一致</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">(<span class="keyword">int</span> i)</span> <span class="comment">//获取 index=i 位置元素的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSet</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> newValue)</span><span class="comment">//返回 index=i 位置的当前的值，并将其设置为新值：newValue</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndIncrement</span><span class="params">(<span class="keyword">int</span> i)</span><span class="comment">//获取 index=i 位置元素的值，并让该位置的元素自增</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndDecrement</span><span class="params">(<span class="keyword">int</span> i)</span> <span class="comment">//获取 index=i 位置元素的值，并让该位置的元素自减</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAdd</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> delta)</span> <span class="comment">//获取 index=i 位置元素的值，并加上设定的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> <span class="comment">//如果输入的数值等于预期值，则以原子方式将 index=i 位置的元素值设置为输入值（update）</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">lazySet</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> newValue)</span><span class="comment">//最终 将index=i 位置的元素设置为newValue,使用 lazySet 设置之后可能导致其他线程在之后的一小段时间内还是可以读到旧的值。</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>上述都是获取旧值，类似的也可以获取新的值</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>引用类型的原子类</p>
+<ul>
+<li><p><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>基本类型原子类只能更新一个变量，如果需要原子更新多个变量（或者说是多个属性），需要使用引用类型原子类</strong></span></p>
+</li>
+<li><p>用法基本一致：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 引用类型原子类</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">AtomicReferenceTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Person person = <span class="keyword">new</span> Person(<span class="string">&quot;李佳&quot;</span>, <span class="number">12</span>);</span><br><span class="line">        AtomicReference&lt;Person&gt; atomicReference = <span class="keyword">new</span> AtomicReference();</span><br><span class="line">        atomicReference.set(person);</span><br><span class="line"></span><br><span class="line">        Person newPerson = <span class="keyword">new</span> Person(<span class="string">&quot;宋丹丹&quot;</span>, <span class="number">23</span>);</span><br><span class="line">        atomicReference.compareAndSet(person, newPerson);</span><br><span class="line"></span><br><span class="line">        logger.info(<span class="string">&quot;name: &#123;&#125;, age: &#123;&#125;&quot;</span>, atomicReference.get().getAge(), atomicReference.get().getName());</span><br><span class="line"></span><br><span class="line">        person.setAge(<span class="number">10</span>);</span><br><span class="line">        <span class="comment">// 引用对象属性的更改会被发现，不属于ABA问题</span></span><br><span class="line">        logger.info(<span class="string">&quot;update success? [&#123;&#125;]&quot;</span>, atomicReference.compareAndSet(person, person));</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 带更新版本的引用原子类型</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">AtomicStampedReferenceTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Integer initialRef = <span class="number">0</span>, initialStamp = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 初始化时应携带初始化的版本</span></span><br><span class="line">        <span class="keyword">final</span> AtomicStampedReference&lt;Integer&gt; asr = <span class="keyword">new</span> AtomicStampedReference&lt;&gt;(initialRef, initialStamp);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// compare and set</span></span><br><span class="line">        <span class="keyword">final</span> Integer updateRef = <span class="number">233</span>, updateStamp = <span class="number">999</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 注意： 不是使用get方法而是使用getReference和getStamp</span></span><br><span class="line">        logger.info(<span class="string">&quot;更新状态: [&#123;&#125;], 新的值: [&#123;&#125;]，新的标签: [&#123;&#125;]&quot;</span>, asr.compareAndSet(initialRef, updateRef, initialStamp, updateStamp), asr.getReference(), asr.getStamp());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// get的使用方法，只需提供一个长度为1的数组即可</span></span><br><span class="line">        <span class="keyword">int</span>[] holder = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>];</span><br><span class="line">        logger.info(<span class="string">&quot;当前值：&#123;&#125; 当前的stamp: &#123;&#125;&quot;</span>, asr.get(holder), holder[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 单独更新版本而不更新引用</span></span><br><span class="line">        <span class="comment">// 1. 注意更新版本时也要提供预期的索引对象，也就是说更新版本也应该是线程安全的，毕竟版本是与引用对应的</span></span><br><span class="line">        logger.info(<span class="string">&quot;更新结果：&#123;&#125;, 当前的引用：&#123;&#125;, 当前的版本: &#123;&#125;&quot;</span>, asr.attemptStamp(updateRef, <span class="number">88</span>), asr.getReference(), asr.getStamp());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 无条件的重新设置当前值与版本号</span></span><br><span class="line">        <span class="comment">// 1. 注意是无条件的设置，所以不需要提供预期值，但是也不是线程安全的</span></span><br><span class="line">        <span class="comment">// 与compareAndSet方法是对应的</span></span><br><span class="line">        asr.set(initialRef, initialStamp);</span><br><span class="line">        logger.info(<span class="string">&quot;当前的值：&#123;&#125;, 当前的版本: &#123;&#125;&quot;</span>, asr.getReference(), asr.getStamp());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// weakCompareAndSet</span></span><br><span class="line">        <span class="comment">// 1. 其内部实际上就是完全调用了compareSet方法，但是这个方法不保证立即更新，推测可能是jvm通过方法名在native中做了转发</span></span><br><span class="line">        logger.info(<span class="string">&quot;更新结果：&#123;&#125;, 当前的引用：&#123;&#125;, 当前的版本: &#123;&#125;&quot;</span>, asr.weakCompareAndSet(initialRef, updateRef, initialStamp, updateStamp), asr.getReference(), asr.getStamp());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 只有两个更新版本的带版本引用类型原子类</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">AtomicMarkableReferenceTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Boolean initialRef = <span class="keyword">null</span>, initialStamp = <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">// 初始化时应携带初始化的版本</span></span><br><span class="line">        <span class="keyword">final</span> AtomicMarkableReference&lt;Boolean&gt; asr = <span class="keyword">new</span> AtomicMarkableReference&lt;&gt;(initialRef, initialStamp);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// compare and set</span></span><br><span class="line">        <span class="keyword">final</span> Boolean updateRef = <span class="keyword">true</span>, updateStamp = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 注意： 不是使用get方法而是使用getReference和isMarked</span></span><br><span class="line">        logger.info(<span class="string">&quot;更新状态: [&#123;&#125;], 新的值: [&#123;&#125;]，新的标签: [&#123;&#125;]&quot;</span>, asr.compareAndSet(initialRef, updateRef, initialStamp, updateStamp), asr.getReference(), asr.isMarked());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// get的使用方法，只需提供一个长度为1的数组即可</span></span><br><span class="line">        <span class="keyword">boolean</span>[] holder = <span class="keyword">new</span> <span class="keyword">boolean</span>[<span class="number">1</span>];</span><br><span class="line">        logger.info(<span class="string">&quot;当前值：&#123;&#125; 当前的stamp: &#123;&#125;&quot;</span>, asr.get(holder), holder[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 单独更新版本而不更新引用</span></span><br><span class="line">        <span class="comment">// 1. 注意更新版本时也要提供预期的索引对象，也就是说更新版本也应该是线程安全的，毕竟版本是与引用对应的</span></span><br><span class="line">        logger.info(<span class="string">&quot;更新结果：&#123;&#125;, 当前的引用：&#123;&#125;, 当前的版本: &#123;&#125;&quot;</span>, asr.attemptMark(updateRef, <span class="keyword">false</span>), asr.getReference(), asr.isMarked());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 无条件的重新设置当前值与版本号</span></span><br><span class="line">        <span class="comment">// 1. 注意是无条件的设置，所以不需要提供预期值，但是也不是线程安全的</span></span><br><span class="line">        <span class="comment">// 与compareAndSet方法是对应的</span></span><br><span class="line">        asr.set(initialRef, initialStamp);</span><br><span class="line">        logger.info(<span class="string">&quot;当前的值：&#123;&#125;, 当前的版本: &#123;&#125;&quot;</span>, asr.getReference(), asr.isMarked());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// weakCompareAndSet</span></span><br><span class="line">        <span class="comment">// 1. 其内部实际上就是完全调用了compareSet方法，但是这个方法不保证立即更新，推测可能是jvm通过方法名在native中做了转发</span></span><br><span class="line">        logger.info(<span class="string">&quot;更新结果：&#123;&#125;, 当前的引用：&#123;&#125;, 当前的版本: &#123;&#125;&quot;</span>, asr.weakCompareAndSet(initialRef, updateRef, initialStamp, updateStamp), asr.getReference(), asr.isMarked());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>对象属性修改类型原子类</p>
+<ol>
+<li><p>其作用在于原子更新对象的属性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 类属性更改类型原子类的测试</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">AtomicIntegerFieldUpdaterTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 使用方法相当于使用包装类</span></span><br><span class="line">  AtomicIntegerFieldUpdater&lt;Person&gt; a =    	AtomicIntegerFieldUpdater.newUpdater(Person.class, <span class="string">&quot;age&quot;</span>);</span><br><span class="line">  Person person = <span class="keyword">new</span> Person(<span class="string">&quot;李佳&quot;</span>, <span class="number">13</span>);</span><br><span class="line">  logger.info(<span class="string">&quot;原有的年龄：&#123;&#125;&quot;</span>, a.getAndIncrement(person));</span><br><span class="line">  logger.info(<span class="string">&quot;更新后的年龄: &#123;&#125;&quot;</span>, a.get(person));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'>**注意：被改造成原子更新的属性应当被volatile修饰，否则会抛出<code>java.lang.IllegalArgumentException: Must be volatile type</code>异常 **</span></li>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>原子的更改一个已有的类的属性，该类的属性并没有设计成原子类，但是又不至于使用加锁的方式更新，为了折中，就有了<code>FieldUpdater</code>这个原子类</strong></span></li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="原子类实现线程安全的方式（以AtomicInteger为例）"><a href="#原子类实现线程安全的方式（以AtomicInteger为例）" class="headerlink" title="原子类实现线程安全的方式（以AtomicInteger为例）"></a>原子类实现线程安全的方式（以AtomicInteger为例）</h2><ul>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>AtomicInteger 类主要利用 CAS (compare and swap) 自旋+ volatile来保证原子操作，从而避免 synchronized 的高开销，执行效率大为提升</strong></span></p>
+<ul>
+<li><strong>CAS的原理是拿期望的值和原本的一个值作比较，如果相同则更新成新的值</strong><ul>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>CAS是一种原子操作，它是一种系统原语，是一条CPU的原子指令，从CPU层面保证它的原子性</strong></span><ul>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>CAS起作用的过程包括了旧值（期待值）的判断，与新值的赋予，看起来是两个步骤，但实际上这整个的过程都是原子操作，也就是说不可能出现，某线程判断旧值之后，在准备更新新值前，其余的线程更改了值</strong></span></li>
+</ul>
+</li>
+<li><strong>与Synchronized相比，CAS更新值失败后可以重试（自旋）或放弃，而不是一直挂起（<span style='color:red;background:背景颜色;font-size:文字大小;'>话说JDK1.7之后的sync也会自旋，使用的也是CAS</span>）</strong></li>
+</ul>
+</li>
+<li><strong>关于<code>volatile</code>的使用，<code>AtomicInteger</code>中存储数据的属性<code>value</code>被<code>volatile</code>修饰，保证其可见性，这使得<code>Unsafe</code>类可以在JVM层面随时获取该属性的最新的值</strong><ul>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>Unsafe中的CAS方法在获取期待值的时候，也是使用<code>Volatile</code>语义来获取指定偏移位置的字段（<code>value</code>属性）的值</strong></span></li>
+</ul>
+</li>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>Atomic相关类中的CAS方法以及获取特定字段的值的方法来自于Unsafe类，关于Unsafe类详见对应的文章</strong></span></li>
+</ul>
+</li>
+<li><p>源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Unsafe类为AtomicInteger类提供CAS方法</span></span><br><span class="line"><span class="comment">// Unsafe是单例的并且只能在BootStrap Class Loader加载的源码类中调用getUnsafe方法</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Unsafe unsafe = Unsafe.getUnsafe();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> valueOffset;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// objectFieldOffset() 方法是一个本地方法，这个方法是用来拿到“原来的值”的内存地址</span></span><br><span class="line">    valueOffset = unsafe.objectFieldOffset</span><br><span class="line">      (AtomicInteger.class.getDeclaredField(<span class="string">&quot;value&quot;</span>));</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Exception ex) &#123; <span class="keyword">throw</span> <span class="keyword">new</span> Error(ex); &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 数据存储在value变量中，使用volatile修饰，保证任何时刻线程都能获取最新的值</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> value;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>objectFieldOffset</code>方法获得对象的实例字段的<strong>相对偏移位置</strong>，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>因为是相对偏移量，所以它其实跟某个具体对象又没什么太大关系，跟class的定义和虚拟机的内存模型的实现细节更相关</strong></span></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 以getAndSet方法的内部源码举例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSet</span><span class="params">(<span class="keyword">int</span> newValue)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> unsafe.getAndSetInt(<span class="keyword">this</span>, valueOffset, newValue);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSetInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4)</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// CAS 的典型用法,使用do-while循环</span></span><br><span class="line">  <span class="keyword">int</span> var5;</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="comment">// 获取旧的值，也就是期望的值</span></span><br><span class="line">    var5 = <span class="keyword">this</span>.getIntVolatile(var1, var2);</span><br><span class="line">    <span class="comment">// compareAndSwapInt为true表示更新成功，跳出循环，否则一直循环</span></span><br><span class="line">    <span class="comment">// 只有判断期望的值就是现在的值，也就是现在没有其他线程正在操作此值时，才会更新值，并且更新的过程是原子的，这个期望值可以通过getIntVolatile获取，也可以自己提供，比如compareAndSet方法</span></span><br><span class="line">  &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapInt(var1, var2, var5, var4));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> var5;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">getIntVolatile</span><span class="params">(Object var1, <span class="keyword">long</span> var2)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>CAS自旋的经典用法就是<code>do-while</code>循环，注意要将获取旧值的操作放到循环体内，因为一旦失败就需要更新旧值才行</strong></span><ul>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>经典CAS自旋步骤（do-while循环）</strong></span>：<ul>
+<li>首先根据value属性的偏移值与实例地址获取value属性的最新值（以volatile语义进行加载）（当前值）</li>
+<li>使用cas方法设置为新的值，如果设置成功退出do-while循环，否则重新进入do-while循环继续获得最新的值，再尝试更新</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用AtominIntegr的compareAndSet方法自己实现的incrementAndGet方法</span></span><br><span class="line"><span class="comment">// 自己实现AtomicInteger的incrementAndGet方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">incrementAndGet</span> <span class="params">(AtomicInteger <span class="keyword">var</span>)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 局部变量不用担心线程安全</span></span><br><span class="line">  <span class="keyword">int</span> prev;</span><br><span class="line">  <span class="keyword">int</span> next;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 使用CAS时的经典用法就是使用do while 循环（或者说是自旋）</span></span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="comment">// 获取当前的值</span></span><br><span class="line">    prev = <span class="keyword">var</span>.get();</span><br><span class="line">    <span class="comment">// 进行加1操作，注意这个操作是线程安全的，因为是使用的局部变量进行操作的，而不是共享变量</span></span><br><span class="line">    next = prev + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 每次操作完之后检查现在的值还是不是之前获取的值，如果是则没有其他线程进行写干扰，返回true，并进行更新，如果值更改了，说明其他线程</span></span><br><span class="line">    <span class="comment">// 进行了写操作，则不进行更新并返回false，继续循环尝试更新</span></span><br><span class="line">  &#125;<span class="keyword">while</span> (!<span class="keyword">var</span>.compareAndSet(prev, next));</span><br><span class="line">  <span class="comment">// 跳出循环后 表示更新成功则返回新值</span></span><br><span class="line">  <span class="keyword">return</span> next;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// AtomicInteger的compareAndSet方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, valueOffset, expect, update);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4, <span class="keyword">int</span> var5)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'>Java中实现CAS操作的底层方法是<code>sun.misc.Unsafe</code>这个类下的几个native方法，底层使用c++实现的</span></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapObject</span><span class="params">(Object var1, <span class="keyword">long</span> var2, Object var4, Object var5)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4, <span class="keyword">int</span> var5)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapLong</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">long</span> var4, <span class="keyword">long</span> var6)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>Unsafe类里面还有其它方法用于不同的用途。比如支持线程挂起和恢复的<code>park</code>和<code>unpark</code>， LockSupport类底层就是调用了这两个方法。还有支持反射操作的<code>allocateInstance()</code>方法等</strong></p>
+</li>
+<li><p>关于<code>Unsafe</code>类的解析，参考<code>Unsafe类介绍</code>这篇文章</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="CAS实现原子操作的三大问题"><a href="#CAS实现原子操作的三大问题" class="headerlink" title="CAS实现原子操作的三大问题"></a>CAS实现原子操作的三大问题</h2><ol>
+<li><p>ABA问题</p>
+<ol>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>概念</strong></span>：</p>
+<ol>
+<li><p>所谓ABA问题，就是一个值原来是A，变成了B，又变回了A。这个时候使用CAS是检查不出变化的，但实际上却被更新了两次</p>
+<blockquote>
+<p>一个小偷，把别人家的钱偷了之后又还了回来，还是原来的钱吗，你老婆出轨之后又回来，还是原来的老婆嘛？ABA问题也一样，如果不好好解决就会带来大量的问题。<span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>最常见的就是资金问题，也就是别人如果挪用了你的钱，在你发现之前又还了回来。但是别人却已经触犯了法律</strong></span></p>
+<p><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>ABA的场景出现时，预期值和旧值相同会让线程以为这个值没有被改变过，然而“值相同=没有被改变过”无法成立，即使第二个线程确确实实改过这个值，只不过又改回来了。“值曾经发生过改动”这个事件就无法被观测到。对于需要跟踪值的改变过程（比如记录值改变的次数）的场景来说ABA问题就是致命的</strong></span></p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><p>ABA问题实际上分两类（对于Java只需关心第二类即可）第一种情况，针对没有GC机制的语言：</p>
+<ol>
+<li>场景描述<ol>
+<li>在多线程的环境中，线程a从共享的地址X中读取到了对象A（期望值）。</li>
+<li>在线程a准备对地址X进行更新之前，线程b将地址X中的值修改为了B。</li>
+<li>接着线程b将地址X中的值又修改回了A。</li>
+<li>最新线程a对地址X执行CAS，发现X中存储的还是对象A，对象匹配，CAS成功。</li>
+</ol>
+</li>
+<li>以上步骤发生在CAS原子操作的过程中，显然已经破坏了原子性，但是在拥有自动GC环境的编程语言，比如说java中，2，3的情况是不可能出现的，因为在java中，只要两个对象的地址一致，就表示这两个对象是相等的</li>
+<li>2，3两步可能出现的情况就在像C++这种，不存在自动GC环境的编程语言中。因为可以自己控制对象的生命周期，如果我们从一个list中删除掉了一个对象，然后又重新分配了一个对象，并将其add back到list中去，那么根据 MRU memory allocation算法，这个新的对象很有可能和之前删除对象的内存地址是一样的。这样就会导致ABA的问题</li>
+</ol>
+</li>
+<li><p>第二种情况，针对Java来说</p>
+<ol>
+<li><p>场景：</p>
+<p>考虑下面的情况，有一个链表里面的数据是A-&gt;B-&gt;C,我们希望执行一个CAS操作，将A替换成D，生成链表D-&gt;B-&gt;C。考虑下面的步骤：</p>
+<ol>
+<li>线程a读取链表头部节点A。</li>
+<li>线程b将链表中的B节点删掉，链表变成了A-&gt;C</li>
+<li>线程a执行CAS操作，将A替换从D。</li>
+<li>最后我们的到的链表是D-&gt;C，而不是D-&gt;B-&gt;C。</li>
+</ol>
+</li>
+<li><p>显然 CAS只关心了链表头部的元素是否是元素A（地址比较），而对于元素A的内容（链表指针的指向）的变动并不关心，看下边的例子证实此结论：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * ABA 问题的模拟</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ABATest</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">  List&lt;Integer&gt; a = <span class="keyword">new</span> ArrayList&lt;&gt;(Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>));</span><br><span class="line">  List&lt;Integer&gt; b = <span class="keyword">new</span> ArrayList&lt;&gt;(Arrays.asList(<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">4</span>));</span><br><span class="line">  List&lt;Integer&gt; c = <span class="keyword">new</span> ArrayList&lt;&gt;(Arrays.asList(<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">4</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 使用AtomicReference对列表实现原子操作</span></span><br><span class="line">  AtomicReference&lt;List&lt;Integer&gt;&gt; atomicReference= <span class="keyword">new</span> AtomicReference&lt;&gt;(a);</span><br><span class="line">  System.out.println(atomicReference.compareAndSet(a,b));</span><br><span class="line">  System.out.println(atomicReference.compareAndSet(b,a));</span><br><span class="line">  a.add(<span class="number">133</span>);</span><br><span class="line">  <span class="comment">// 无视数组内容的更改</span></span><br><span class="line">  System.out.println(atomicReference.compareAndSet(a,c));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>此类ABA问题可能会导致某些集合类的操作并不是原子性的，因为你并不能保证在CAS的过程中，有没有其他的节点发送变化</strong></span></li>
+<li>上边提出的场景应该只是一个很明显易懂的场景，应该也有其他ABA问题的场景</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>解决方法</p>
+<ol>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>每一次对集合类型进行CAS更新成功后都应提交一个版本号，使用CAS更新前要提供预期版本号，如果版本号并非预期说明引用的内容被其他线程更新了（相当于除了CAS之外，手动添加了一个约束），版本号由程序员提供</strong></span></p>
+<ol>
+<li><p>从JDK 1.5开始，JDK的atomic包里提供了一个类<code>AtomicStampedReference</code>类来解决ABA问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * ABA 问题的解决</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ABASolutionTest</span> <span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Logger logger = LogManager.getLogger(AtomicDemo.class.getName());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        List&lt;Integer&gt; a = <span class="keyword">new</span> ArrayList&lt;&gt;(Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>));</span><br><span class="line">        List&lt;Integer&gt; b = <span class="keyword">new</span> ArrayList&lt;&gt;(Arrays.asList(<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">4</span>));</span><br><span class="line">        List&lt;Integer&gt; c = <span class="keyword">new</span> ArrayList&lt;&gt;(Arrays.asList(<span class="number">6</span>,<span class="number">7</span>,<span class="number">3</span>,<span class="number">4</span>));</span><br><span class="line"></span><br><span class="line">        AtomicStampedReference&lt;List&lt;Integer&gt;&gt; atomicReference= <span class="keyword">new</span> AtomicStampedReference&lt;List&lt;Integer&gt;&gt;(a, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        logger.info(atomicReference.compareAndSet(a,b,<span class="number">0</span>, <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">        logger.info(atomicReference.compareAndSet(b,a,<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line">        a.add(<span class="number">133</span>); <span class="comment">// 执行更新时应当提交新的版本</span></span><br><span class="line">        logger.info(atomicReference.compareAndSet(a,c,<span class="number">3</span>,<span class="number">4</span>));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>AtomicMarkableReference 不能解决ABA问题，AtomicMarkableReference是将一个boolean值作是否有更改的标记，本质就是它的版本号只有两个，true和false，修改的时候在这两个版本号之间来回切换，这样做并不能解决ABA的问题，只是会降低ABA问题发生的几率而已</strong></li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>使用自旋的开销比较大</p>
+<ol>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>如果长时间自旋还是不成功会导致开销较大，会占用大量的CPU资源</strong></span></li>
+<li>解决方法：<ol>
+<li>让JVM支持处理器提供的<strong>pause指令</strong>。<ul>
+<li>pause指令能让自旋失败时cpu睡眠一小段时间再继续自旋，从而使得读操作的频率低很多,为解决内存顺序冲突而导致的CPU流水线重排的代价也会小很多</li>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'>抽象。。</span></li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>CAS本身只能保证一个共享变量的原子操作</p>
+<ol>
+<li>使用<code>AtomicReference</code>，将多个变量放在一个类中</li>
+<li>使用锁（废话）</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/multi-thread/Atomic%E5%8E%9F%E5%AD%90%E7%B1%BB%E6%80%BB%E7%BB%93.md">JavaGuide Atomic原子类总结</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000022798961">ABA问题</a></li>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/02/14/talk-about-java-magic-class-unsafe.html">Java魔法类，Unsafe应用解析（挑着看的，没有全部看，部分看不懂）</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java%E5%9F%BA%E7%A1%80-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag"># Java基础-并发编程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/12/AQS%E5%8E%9F%E7%90%86%E4%B8%8ELock/" rel="prev" title="AQS原理与Lock">
+      <i class="fa fa-chevron-left"></i> AQS原理与Lock
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Atomic%E5%8E%9F%E5%AD%90%E7%B1%BB%E7%9A%84%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">Atomic原子类的学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">使用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%AE%9E%E7%8E%B0%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%88%E4%BB%A5AtomicInteger%E4%B8%BA%E4%BE%8B%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">原子类实现线程安全的方式（以AtomicInteger为例）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAS%E5%AE%9E%E7%8E%B0%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E7%9A%84%E4%B8%89%E5%A4%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">CAS实现原子操作的三大问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lee</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
