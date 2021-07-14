@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://images.demoli.xyz/image-20210516204549657.png">
 <meta property="og:image" content="http://images.demoli.xyz/image-20210516222750544.png">
 <meta property="article:published_time" content="2021-07-12T01:05:09.000Z">
-<meta property="article:modified_time" content="2021-07-12T01:16:53.846Z">
+<meta property="article:modified_time" content="2021-07-14T01:15:49.127Z">
 <meta property="article:author" content="Lee">
 <meta property="article:tag" content="Java基础-设计模式">
 <meta name="twitter:card" content="summary">
@@ -191,10 +191,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-07-12 09:05:09 / 修改时间：09:16:53" itemprop="dateCreated datePublished" datetime="2021-07-12T09:05:09+08:00">2021-07-12</time>
+              <time title="创建时间：2021-07-12 09:05:09" itemprop="dateCreated datePublished" datetime="2021-07-12T09:05:09+08:00">2021-07-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-14 09:15:49" itemprop="dateModified" datetime="2021-07-14T09:15:49+08:00">2021-07-14</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -223,12 +229,15 @@
 <span id="more"></span>
 
 <ul>
-<li>所有的23种设计模式都要满足以下七大设计原则（实际上就是面向对象设计的五大原则+迪米特原则+合成复用原则）<ul>
-<li>单一职责<ol>
+<li><p>所有的23种设计模式都要满足以下七大设计原则（实际上就是面向对象设计的五大原则+迪米特原则+合成复用原则）</p>
+<ul>
+<li><p>单一职责</p>
+<ol>
 <li><strong>一个类，最好只做一件事，只有一个引起它的变化功能方法，降低功能依赖</strong></li>
 </ol>
 </li>
-<li>开闭原则<ol>
+<li><p>开闭原则</p>
+<ol>
 <li><strong>类是可扩展的，但是不可修改的</strong><ol>
 <li>对扩展开放，意味着有新的需求或变化时，可以对现有代码进行扩展，以适应新的情况。 </li>
 <li>对修改封闭，意味着类一旦设计完成，就可以独立完成其工作，而不要对其进行任何尝试的修改</li>
@@ -237,18 +246,21 @@
 <li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>实现开开放封闭原则的核心思想就是对抽象编程，而不对具体编程，因为抽象相对稳定。 让类依赖于固定的抽象，所以修改就是封闭的； 而通过面向对象的继承和多态机制，又可以实现对抽象类的继承，通过覆写其方法来改变固有行为，实现新的拓展方法，所以就是开放的</strong></span></li>
 </ol>
 </li>
-<li>里氏替换原则<ol>
+<li><p>里氏替换原则</p>
+<ol>
 <li>子类必须能够替换其基类，同时，这一约束反过来则是不成立的，子类可以替换基类，但是基类不一定能替换子类</li>
 <li>里氏替换原则描述的实际上就是面向对象编程过程中的继承这一特性的使用原则</li>
 </ol>
 </li>
-<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>依赖倒置原则</strong></span><ol>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>依赖倒置原则</strong></span></p>
+<ol>
 <li>依赖于抽象，面向接口编程</li>
 <li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>具体而言就是高层模块不依赖于底层模块（具体实现模块之间不相互依赖，而是统一依赖于抽象），二者都同依赖于抽象；抽象不依赖于具体，具体依赖于抽象</strong></span></li>
 <li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>抽象是整个程序的骨架，必须稳定，而实现就是骨架上的血肉</strong></span></li>
 </ol>
 </li>
-<li>接口隔离原则<ol>
+<li><p>接口隔离原则</p>
+<ol>
 <li><strong>使用多个小的专门的接口，而不要使用一个大的总接口。强迫实现类去使用胖接口中根本用不到的方法与属性会带来污染以及隐患，如果不得以修改胖接口，那么会导致一系列的修改</strong></li>
 <li>分离的手段主要有以下两种： <ol>
 <li>委托分离，通过增加一个新的类型来委托客户的请求，隔离客户和接口的直接依赖，但是会增加系统的开销</li>
@@ -257,13 +269,34 @@
 </li>
 </ol>
 </li>
-<li>迪米特原则（模块之间降低依赖）<ul>
+<li><p>迪米特原则（模块之间降低依赖）</p>
+<ul>
 <li><strong>每个模块对其他模块都要尽可能少地了解和依赖，降低代码耦合度</strong></li>
 </ul>
 </li>
-<li>合成复用原则（尽量使用接口继承与多继承实现复用目的，而不是继承）<ul>
-<li>尽量使用组合(has-a)/聚合(contains-a)而不是继承(is-a)达到软件复用的目的</li>
+<li><p>合成复用原则</p>
+<ul>
+<li>尽量使用组合(has-a)/聚合(contains-a)而不是继承(is-a)达到软件复用的目的（<strong>类之间的关系大概有五种：继承、依赖、关联、聚合、组合</strong>）</li>
+<li>在确定使用向上转型时再使用继承，否则使用组合或者聚合，<strong>组合中组合类与被包装类之间是松耦合的，而继承关系中的父类与子类是紧耦合的；继承关系是编译时期就确定的，而组合关系可以在运行期被确定，继承关系破坏了封装</strong></li>
+<li><strong>组合、聚合关系相当于继承关系的最明显的缺点是创建整体类的对象是需要同步创建被包装类的对象，而继承中，子类创建对象不要求创建父类对象</strong></li>
 </ul>
+<blockquote>
+<p>类之间的五大关系</p>
+<ol>
+<li>继承 子类继承与实现，继承是一种<strong>is-a</strong>关系</li>
+<li>依赖 依赖关系在Java中体现为局域变量、方法的形参，或者对静态方法的调用</li>
+<li>关联 关联关系一般使用成员变量来实现</li>
+<li>聚合 聚合是关联关系的一种特例，他体现的是整体与部分、拥有的关系，即<strong>has-a</strong>的关系，整体与部分之间是可分离的，他们可以具有各自的生命周期<ol>
+<li>聚合是关联的特例，代码层面上一致，只能从语义上区分</li>
+</ol>
+</li>
+<li>组合 组合也是关联关系的一种特例，他体现的是一种<strong>contains-a</strong>的关系，这种关系比聚合更强，也称为强聚合；组合同样体现整体与部分间的关系，但此时整体与部分是不可分的，整体的生命周期结束也就意味着部分的生命周期结束<ol>
+<li>组合是关联的特例，代码层面上一致，只能从语义上区分</li>
+</ol>
+</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_31655965/article/details/54645220">参考文章</a></li>
+</ol>
+</blockquote>
 </li>
 </ul>
 </li>
@@ -281,7 +314,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="comment">// 首先，将 new Singleton() 堵死</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    <span class="comment">// 创建私有静态实例，意味着这个类第一次使用（加载）的时候就会进行创建</span></span><br><span class="line">    <span class="comment">// 此处由JVM保证其线程安全性</span></span><br><span class="line">    <span class="comment">// 此显式赋值实际上是在类加载过程中的clinit方法中完成的，可以保证线程安全，并且可以保证只初始化了一次，也就是保证单例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 瞎写一个静态方法。这里想说的是，如果我们只是要调用 Singleton.getDate(...)，</span></span><br><span class="line">    <span class="comment">// 本来是不想要生成 Singleton 实例的，不过没办法，已经生成了</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">getDate</span><span class="params">(String mode)</span> </span>&#123;<span class="keyword">return</span> <span class="keyword">new</span> Date();&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>饿汉式的缺点，在<code>getDate</code>方法的注释中已经说明了，但是在实际使用中，这种奇怪的设计实际上是比较少见的</li>
+<li>饿汉式的缺点，在<code>getDate</code>方法的注释中已经说明了</li>
 <li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>由JVM保证线程安全与单例（只创建一次实例）</strong></span></li>
 </ul>
 </li>
@@ -297,7 +330,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;  </span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;  </span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>&#123;&#125;  </span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;  </span><br><span class="line"> <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;  </span><br><span class="line">        instance = <span class="keyword">new</span> Singleton();  </span><br><span class="line">    &#125;  </span><br><span class="line"> <span class="keyword">return</span> instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
 
 <ul>
-<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>使用锁保证了线程安全，但是效率很低，因为大多数情况下都不需要加锁</strong></span></li>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>使用锁保证了线程安全，但是效率很低，因为大多数情况下都不需要加锁，毕竟只需要创建一次实例后续就再不用创建了</strong></span></li>
 </ul>
 </li>
 <li><p>使用双重验证机制+锁（volatile关键字使用的典型案例）（懒汉式）（<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>实际上是前边的加锁方式的改进，提升加锁的效率，换句话说就是减低锁的粒度，从方法移动到代码块，当然也引来了其他的问题，最大的功臣是volatile的使用，解决了可能出现的未初始化的对象被使用的情况（<code>对象的安全发布问题</code>）</strong></span>）</p>
@@ -324,8 +357,10 @@
 <li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>这里可能会有以下的误解：在自己的印象中，sync是比volatile作用范围更大的加锁，而new的语句在sync中，难道sync不能保证有序吗？</strong></span></p>
 <ul>
 <li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>sync可以保证有序，但是不能防止出现指令重排，换句话说，sync与volatile在实现有序性的方法上是不同的，volatile通过内存屏障直接防止指令重排以实现有序性，而sync是通过互斥锁来实现有序性，也就是在单线程内可以执行任意的指令重排，但是其结果对于其他线程来说是一致的，在单例模式的案例中，意思就是，在单个线程执行完sync中的代码块后，其余的线程总能拿到一个实例，但是在这个单个线程执行的瞬间，内部的new关键字允许进行重排序，那么问题就出在第一个if判断处</strong></span></li>
-<li>第一个if判断处针对instance变量进行了判断，并且尤其重要的是该if判断不再sync代码块内，因此指令重排序会影响到其他线程执行此if判断，就会发生上述的描述的情景了（除此之外，volatile也保证了内存可见）</li>
+<li>第一个if判断处针对instance变量进行了判断，并且尤其重要的是该if判断不在sync代码块内，因此指令重排序会影响到其他线程执行此if判断，就会发生上述的描述的情景了</li>
 </ul>
+</li>
+<li><p><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>final也是可以实现安全发布的，但是因为这里的是懒初始化，以及final的编译原理，所以并不能使用final（编译不通过）</strong></span></p>
 </li>
 </ul>
 </li>
@@ -336,12 +371,12 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="comment">// 属性举例</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span> <span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Tempclass</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i =<span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                Singleton uniqueInstance = Singleton.INSTANCE;</span><br><span class="line">                System.out.println(uniqueInstance.hashCode());</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
 <ul>
-<li><p><strong>使用enum来构建单例模式的另外一个好处在于可以避免在反序列化时绕过普通类的private构造方法从而创建出多个实例</strong></p>
+<li><p><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>使用enum来构建单例模式的另外一个好处在于可以避免在反序列化时绕过普通类的private构造方法从而创建出多个实例</strong></span></p>
 <ul>
 <li><strong>当然在反序列化时也有其他的方法来避免破坏单例，比如<code>readResolve</code>方法的实现</strong></li>
 </ul>
 </li>
-<li><p>很多程序，尤其是Web程序，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>大部分服务类都应该被视作Singleton</strong>，如果全部按Singleton的写法写，会非常麻烦，所以，<strong>通常是通过约定让框架（例如Spring）来实例化这些类，保证只有一个实例，调用方自觉通过框架获取实例而不是new操作符，换句话说就是使用spring ioc的时候，就默认按照约定把所有的普通类看做单例，由框架区管理对象形成约束，而不是自己使用new创建对象。因此，除非确有必要，否则Singleton模式一般以“约定”为主，不会刻意实现它。</strong></span></p>
+<li><p>很多程序，尤其是Web程序，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>大部分服务类都应该被视作Singleton</strong>，如果全部按Singleton的写法写，会非常麻烦，所以，<strong>通常是通过约定让框架（例如Spring）来实例化这些类，保证只有一个实例，调用方自觉通过框架获取实例而不是new操作符，换句话说就是使用spring ioc的时候，就默认按照约定把所有的普通类看做单例，由框架去管理对象形成约束，而不是自己使用new创建对象</strong></span></p>
 </li>
 </ul>
 <h3 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h3><ul>
@@ -353,7 +388,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> classFoodFactory&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">publicstatic Food <span class="title">makeFood</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (name.equals(<span class="string">&quot;noodle&quot;</span>)) &#123;</span><br><span class="line">            Food noodle = <span class="keyword">new</span> LanZhouNoodle();</span><br><span class="line">            noodle.addSpicy(<span class="string">&quot;more&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> noodle;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (name.equals(<span class="string">&quot;chicken&quot;</span>)) &#123;</span><br><span class="line">            Food chicken = <span class="keyword">new</span> HuangMenChicken();</span><br><span class="line">            chicken.addCondiment(<span class="string">&quot;potato&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> chicken;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>Spring 中的 BeanFactory 使用简单工厂模式，产生 Bean 对象</li>
+<li>Spring 中的 BeanFactory 使用简单工厂模式，产生 Bean 对象，<strong>除此之外还有Executor框架中的Executors工厂类创建线程池</strong></li>
 <li><strong>专门生产CPU的工厂</strong></li>
 </ul>
 <h4 id="工厂模式（需要有多个工厂创建多类对象，在工厂上抽象出一个工厂类接口，由实现类决定创建什么类型的对象）"><a href="#工厂模式（需要有多个工厂创建多类对象，在工厂上抽象出一个工厂类接口，由实现类决定创建什么类型的对象）" class="headerlink" title="工厂模式（需要有多个工厂创建多类对象，在工厂上抽象出一个工厂类接口，由实现类决定创建什么类型的对象）"></a>工厂模式（需要有多个工厂创建多类对象，在工厂上抽象出一个工厂类接口，由实现类决定创建什么类型的对象）</h4><ul>
@@ -380,7 +415,7 @@
 
 
 
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">classUser&#123;</span><br><span class="line">    <span class="comment">// 下面是“一堆”的属性</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">private</span> String nickName;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造方法私有化，不然客户端就会直接调用构造方法了</span></span><br><span class="line">    privateUser(String name, String password, String nickName, <span class="keyword">int</span> age) &#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.password = password;</span><br><span class="line">        <span class="keyword">this</span>.nickName = nickName;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 静态方法，用于生成一个 Builder，这个不一定要有，不过写这个方法是一个很好的习惯，</span></span><br><span class="line">    <span class="comment">// 有些代码要求别人写 new User.UserBuilder().a()...build() 看上去就没那么好</span></span><br><span class="line">    <span class="function">publicstatic UserBuilder <span class="title">builder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserBuilder();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> classUserBuilder&#123;</span><br><span class="line">        <span class="comment">// 下面是和 User 一模一样的一堆属性</span></span><br><span class="line">        <span class="keyword">private</span> String  name;</span><br><span class="line">        <span class="keyword">private</span> String password;</span><br><span class="line">        <span class="keyword">private</span> String nickName;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">        privateUserBuilder() &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 链式调用设置各个属性值，返回 this，即 UserBuilder</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">name</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">password</span><span class="params">(String password)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.password = password;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">nickName</span><span class="params">(String nickName)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.nickName = nickName;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">age</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// build() 方法负责将 UserBuilder 中设置好的属性“复制”到 User 中。</span></span><br><span class="line">        <span class="comment">// 当然，可以在 “复制” 之前做点检验</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> User <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (name == <span class="keyword">null</span> || password == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;用户名和密码必填&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (age &lt;= <span class="number">0</span> || age &gt;= <span class="number">150</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;年龄不合法&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 还可以做赋予”默认值“的功能</span></span><br><span class="line">              <span class="keyword">if</span> (nickName == <span class="keyword">null</span>) &#123;</span><br><span class="line">                nickName = name;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> User(name, password, nickName, age);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">classUser&#123;</span><br><span class="line">    <span class="comment">// 下面是“一堆”的属性</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">private</span> String nickName;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造方法私有化，不然客户端就会直接调用构造方法了</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">User</span><span class="params">(String name, String password, String nickName, <span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.password = password;</span><br><span class="line">        <span class="keyword">this</span>.nickName = nickName;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 静态方法，用于生成一个 Builder，这个不一定要有，不过写这个方法是一个很好的习惯，</span></span><br><span class="line">    <span class="comment">// 有些代码要求别人写 new User.UserBuilder().a()...build() 看上去就没那么好</span></span><br><span class="line">    <span class="function">publicstatic UserBuilder <span class="title">builder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserBuilder();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserBuilder</span></span>&#123;</span><br><span class="line">        <span class="comment">// 下面是和 User 一模一样的一堆属性</span></span><br><span class="line">        <span class="keyword">private</span> String  name;</span><br><span class="line">        <span class="keyword">private</span> String password;</span><br><span class="line">        <span class="keyword">private</span> String nickName;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">        privateUserBuilder() &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 链式调用设置各个属性值，返回 this，即 UserBuilder</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">name</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">password</span><span class="params">(String password)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.password = password;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">nickName</span><span class="params">(String nickName)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.nickName = nickName;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> UserBuilder <span class="title">age</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// build() 方法负责将 UserBuilder 中设置好的属性“复制”到 User 中。</span></span><br><span class="line">        <span class="comment">// 当然，可以在 “复制” 之前做点检验</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> User <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (name == <span class="keyword">null</span> || password == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;用户名和密码必填&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (age &lt;= <span class="number">0</span> || age &gt;= <span class="number">150</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;年龄不合法&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 还可以做赋予”默认值“的功能</span></span><br><span class="line">              <span class="keyword">if</span> (nickName == <span class="keyword">null</span>) &#123;</span><br><span class="line">                nickName = name;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> User(name, password, nickName, age);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>是由构建者模式的核心就是多了一个Builder类，所有的属性都要先给这个Builder类，由<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>他去执行验证（以及其他功能，比如强制提供某属性以及提供默认属性）和对象的创建</strong></span><ul>
@@ -403,7 +438,10 @@
 <li>代理模式为其他对象提供一种代理以<strong>控制对这个对象的访问</strong>。优点是可以<strong>增强目标对象的功能，降低代码耦合度</strong>，扩展性好。缺点是在<strong>客户端和目标对象之间增加代理对象会导致请求处理速度变慢，增加系统复杂度</strong></li>
 <li><strong>代理的分类</strong><ul>
 <li>静态代理：在程序运行前就已经存在代理类的字节码文件，代理类和委托类的关系在运行前就确定了。</li>
-<li>动态代理：程序运行期间动态的生成，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>所以不存在代理类的字节码文件。代理类和委托类的关系是在程序运行时确定（基于反射）</strong></span></li>
+<li>动态代理：程序运行期间动态的生成，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>所以不存在代理类的字节码文件。代理类和委托类的关系是在程序运行时确定（基于反射）</strong></span><ul>
+<li>Spring AOP与Mybatis等一系列框架都使用了动态代理的技术</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -412,7 +450,7 @@
 <li><strong>SpringMVC请求处理流程中的控制器适配器</strong></li>
 </ul>
 <h2 id="行为型模式"><a href="#行为型模式" class="headerlink" title="行为型模式"></a>行为型模式</h2><ul>
-<li><strong>通过类之间不同通信方式实现不同行为</strong></li>
+<li><strong>通过类之间不同通信方式（所谓不同的通信方式比如继承关系、通过中介类）实现不同行为</strong></li>
 </ul>
 <h3 id="模板方法模式"><a href="#模板方法模式" class="headerlink" title="模板方法模式"></a>模板方法模式</h3><ul>
 <li><strong>模板方法模式是一种行为设计模式，它定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。 模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤的实现方式</strong></li>
@@ -421,8 +459,11 @@
 <h3 id="装饰者模式"><a href="#装饰者模式" class="headerlink" title="装饰者模式"></a>装饰者模式</h3><ul>
 <li>装饰者模式可以<strong>动态地给对象添加一些额外的属性或行为</strong>，即需要修改原有的功能，但又不愿直接去修改原有的代码时，设计一个Decorator套在原有代码外面，符合<strong>开闭原则</strong></li>
 <li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>装饰者模式与代理模式从目的上来讲是很类似的，都会提供类似增强的功能，主要区别如下</strong></span><ul>
-<li><strong>代理模式是为了实现对被代理对象的控制而实现的，被代理对象可能难以直接获得或者不想暴露给客户端，用户直接调用的实际上是代理对象的方法，再由代理对象去执行被代理对象的方法</strong></li>
-<li><strong>装饰者模式主要是为了解决模块功能的问题，避免出现为了增加新的功能而带来的<code>子类爆炸</code>的问题，并且可以实现模块功能之间的任意组合，最常见的就是Java IO的各种类，比如<code>BufferedInputStream</code>、<code>GZIPInputStream</code>等等</strong></li>
+<li><strong>代理模式是为了实现对被代理对象的控制而实现的，被代理对象可能难以直接获得或者不想暴露给客户端（比如rpc框架中，实际上被代理的对象甚至不在一台服务器上），用户直接调用的实际上是代理对象的方法，再由代理对象去执行被代理对象的方法</strong></li>
+<li><strong>装饰者模式主要是为了解决模块功能的问题，避免出现为了增加新的功能而带来的<code>子类爆炸</code>的问题，并且可以实现模块功能之间的任意组合，最常见的就是Java IO的各种类，比如<code>BufferedInputStream</code>、<code>GZIPInputStream</code>等等</strong><ul>
+<li>装饰者模式的还有一个源码中的案例就是Executors线程池工厂类中提供的一系列包装类</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
