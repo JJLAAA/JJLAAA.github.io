@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Unsafe类解析概述 Unsafe是位于sun.misc包下的一个类，主要提供一些用于执行低级别、不安全操作的方法，如直接访问系统内存资源、自主管理内存资源等，这些方法在提升Java运行效率、增强Java语言底层资源操作能力方面起到了很大的作用。 但由于Unsafe类使Java语言拥有了类似C语言指针一样操作内存空间的能力，这无疑也增加了程序发生相关指针问题的风险。在程序中过度、不正确使用Uns">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unsafe类解析">
+<meta property="og:url" content="http://example.com/2021/07/15/Unsafe%E7%B1%BB%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="Long March">
+<meta property="og:description" content="Unsafe类解析概述 Unsafe是位于sun.misc包下的一个类，主要提供一些用于执行低级别、不安全操作的方法，如直接访问系统内存资源、自主管理内存资源等，这些方法在提升Java运行效率、增强Java语言底层资源操作能力方面起到了很大的作用。 但由于Unsafe类使Java语言拥有了类似C语言指针一样操作内存空间的能力，这无疑也增加了程序发生相关指针问题的风险。在程序中过度、不正确使用Uns">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210522160908276.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210522172947851.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210706201301955.png">
+<meta property="og:image" content="http://images.demoli.xyz/image-20210524190429484.png">
+<meta property="article:published_time" content="2021-07-15T12:44:45.000Z">
+<meta property="article:modified_time" content="2021-07-15T12:45:33.585Z">
+<meta property="article:author" content="Lee">
+<meta property="article:tag" content="Java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.demoli.xyz/image-20210522160908276.png">
+
+<link rel="canonical" href="http://example.com/2021/07/15/Unsafe%E7%B1%BB%E8%A7%A3%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Unsafe类解析 | Long March</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Long March</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/15/Unsafe%E7%B1%BB%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Lee">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Long March">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unsafe类解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-15 20:44:45 / 修改时间：20:45:33" itemprop="dateCreated datePublished" datetime="2021-07-15T20:44:45+08:00">2021-07-15</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Unsafe类解析"><a href="#Unsafe类解析" class="headerlink" title="Unsafe类解析"></a>Unsafe类解析</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>Unsafe是位于<code>sun.misc</code>包下的一个类，主要提供一些用于执行<strong>低级别、不安全操作的方法</strong>，如<strong>直接访问系统内存资源、自主管理内存资源等，这些方法在提升Java运行效率、增强Java语言底层资源操作能力方面起到了很大的作用</strong>。</li>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>但由于Unsafe类使Java语言拥有了类似C语言指针一样操作内存空间的能力，这无疑也增加了程序发生相关指针问题的风险。在程序中过度、不正确使用Unsafe类会使得程序出错的概率变大，使得Java这种安全的语言变得不再“安全”，因此对Unsafe的使用一定要慎重。这也是Unsafe类得名的由来</strong></span></li>
+</ul>
+<span id="more"></span>
+
+<h3 id="Unsafe类实例"><a href="#Unsafe类实例" class="headerlink" title="Unsafe类实例"></a>Unsafe类实例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Unsafe theUnsafe;</span><br><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        registerNatives();</span><br><span class="line">        Reflection.registerMethodsToFilter(Unsafe.class, <span class="keyword">new</span> String[]&#123;<span class="string">&quot;getUnsafe&quot;</span>&#125;);</span><br><span class="line">        theUnsafe = <span class="keyword">new</span> Unsafe();</span><br><span class="line">        ARRAY_BOOLEAN_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">boolean</span>[].class);</span><br><span class="line">        ARRAY_BYTE_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">byte</span>[].class);</span><br><span class="line">        ARRAY_SHORT_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">short</span>[].class);</span><br><span class="line">        ARRAY_CHAR_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">char</span>[].class);</span><br><span class="line">        ARRAY_INT_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">int</span>[].class);</span><br><span class="line">        ARRAY_LONG_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">long</span>[].class);</span><br><span class="line">        ARRAY_FLOAT_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">float</span>[].class);</span><br><span class="line">        ARRAY_DOUBLE_BASE_OFFSET = theUnsafe.arrayBaseOffset(<span class="keyword">double</span>[].class);</span><br><span class="line">        ARRAY_OBJECT_BASE_OFFSET = theUnsafe.arrayBaseOffset(Object[].class);</span><br><span class="line">        ARRAY_BOOLEAN_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">boolean</span>[].class);</span><br><span class="line">        ARRAY_BYTE_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">byte</span>[].class);</span><br><span class="line">        ARRAY_SHORT_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">short</span>[].class);</span><br><span class="line">        ARRAY_CHAR_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">char</span>[].class);</span><br><span class="line">        ARRAY_INT_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">int</span>[].class);</span><br><span class="line">        ARRAY_LONG_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">long</span>[].class);</span><br><span class="line">        ARRAY_FLOAT_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">float</span>[].class);</span><br><span class="line">        ARRAY_DOUBLE_INDEX_SCALE = theUnsafe.arrayIndexScale(<span class="keyword">double</span>[].class);</span><br><span class="line">        ARRAY_OBJECT_INDEX_SCALE = theUnsafe.arrayIndexScale(Object[].class);</span><br><span class="line">        ADDRESS_SIZE = theUnsafe.addressSize();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">Unsafe</span><span class="params">()</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Unsafe <span class="title">getUnsafe</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Class var0 = Reflection.getCallerClass();</span><br><span class="line">  <span class="keyword">if</span> (!VM.isSystemDomainLoader(var0.getClassLoader())) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> SecurityException(<span class="string">&quot;Unsafe&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> theUnsafe;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>从源码可以看出<code>Unsafe</code>类是单例模式的，提供静态方法getUnsafe获取Unsafe实例，<strong>当且仅当调用getUnsafe方法的类为引导类加载器所加载时才合法，否则抛出SecurityException异常，换句话说就是用户的自定义类不允许直接使用此<code>不安全的类</code></strong></p>
+</li>
+<li><p>如果确实想在自定义类中使用<code>Unsafe</code>类有以下两个方法</p>
+<ul>
+<li><p>从<code>getUnsafe</code>方法的使用限制条件出发，通过Java命令行命令<code>-Xbootclasspath/a</code>把调用Unsafe相关方法的类A所在jar包路径追加到默认的bootstrap路径中，使得A被引导类加载器加载，从而通过<code>Unsafe.getUnsafe</code>方法安全的获取Unsafe实例。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Xbootclasspath/a: <span class="variable">$&#123;path&#125;</span>   // 其中path为调用Unsafe相关方法的类所在jar包路径 </span><br></pre></td></tr></table></figure></li>
+<li><p>通过反射获取单例对象theUnsafe。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Unsafe <span class="title">reflectGetUnsafe</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Field field = Unsafe.class.getDeclaredField(<span class="string">&quot;theUnsafe&quot;</span>);</span><br><span class="line">      field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">      <span class="comment">// 静态属性</span></span><br><span class="line">      <span class="keyword">return</span> (Unsafe) field.get(<span class="keyword">null</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      log.error(e.getMessage(), e);</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="Unsafe类的功能概览"><a href="#Unsafe类的功能概览" class="headerlink" title="Unsafe类的功能概览"></a>Unsafe类的功能概览</h3><p><img src="http://images.demoli.xyz/image-20210522160908276.png" alt="image-20210522160908276"></p>
+<h4 id="内存操作（主要是对堆外内存的操作）"><a href="#内存操作（主要是对堆外内存的操作）" class="headerlink" title="内存操作（主要是对堆外内存的操作）"></a>内存操作（主要是对堆外内存的操作）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分配内存, 相当于C++的malloc函数</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">allocateMemory</span><span class="params">(<span class="keyword">long</span> bytes)</span></span>;</span><br><span class="line"><span class="comment">//扩充内存</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">reallocateMemory</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">long</span> bytes)</span></span>;</span><br><span class="line"><span class="comment">//释放内存</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">freeMemory</span><span class="params">(<span class="keyword">long</span> address)</span></span>;</span><br><span class="line"><span class="comment">//在给定的内存块中设置值</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">setMemory</span><span class="params">(Object o, <span class="keyword">long</span> offset, <span class="keyword">long</span> bytes, <span class="keyword">byte</span> value)</span></span>;</span><br><span class="line"><span class="comment">//内存拷贝</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">copyMemory</span><span class="params">(Object srcBase, <span class="keyword">long</span> srcOffset, Object destBase, <span class="keyword">long</span> destOffset, <span class="keyword">long</span> bytes)</span></span>;</span><br><span class="line"><span class="comment">//获取给定地址值，忽略修饰限定符的访问限制。与此类似操作还有: getInt，getDouble，getLong，getChar，getByte，getShort，getFloat等</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title">getObject</span><span class="params">(Object o, <span class="keyword">long</span> offset)</span></span>;</span><br><span class="line"><span class="comment">//为给定地址设置值，忽略修饰限定符的访问限制，与此类似操作还有: putInt,putDouble，putLong，putChar等</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">putObject</span><span class="params">(Object o, <span class="keyword">long</span> offset, Object x)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意下述的两个函数与前边的同名重载函数的区别，前者是从某对象的某偏移位置获取特定类型的值，后者是直接从给定的地址中获取对应的类型的值，但是此地址必须是allocateMemory分配的才行</span></span><br><span class="line"><span class="comment">//获取给定地址的byte类型的值（当且仅当该内存地址为allocateMemory分配时，此方法结果为确定的）类似的也有getShort、getChar等等</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">byte</span> <span class="title">getByte</span><span class="params">(<span class="keyword">long</span> address)</span></span>;</span><br><span class="line"><span class="comment">//为给定地址设置byte类型的值（当且仅当该内存地址为allocateMemory分配时，此方法结果才是确定的）类似的也有putShort、putChar等等</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">putByte</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">byte</span> x)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通常，我们在Java中创建的对象都处于堆内内存（heap）中，堆内内存是由JVM所管控的Java进程内存，并且它们遵循JVM的内存管理机制，JVM会采用垃圾回收机制统一管理堆内存<span style='color:red;background:背景颜色;font-size:文字大小;'>。<strong>与之相对的是堆外内存，存在于JVM管控之外的内存区域，Java中对堆外内存的操作，依赖于Unsafe提供的操作堆外内存的native方法</strong></span></li>
+<li>使用堆外内存的原因<ul>
+<li>对垃圾回收停顿的改善。由于堆外内存是直接受操作系统管理而不是JVM，<span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>所以当我们使用堆外内存时，即可保持较小的堆内内存规模。从而在GC时减少回收停顿对于应用的影响</strong></span></li>
+<li>提升程序I/O操作的性能。<span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>通常在I/O通信过程中，会存在堆内内存到堆外内存的数据拷贝操作，对于需要频繁进行内存间数据拷贝且生命周期较短的暂存数据，都建议存储到堆外内存</strong></span></li>
+</ul>
+</li>
+</ul>
+<h5 id="典型应用"><a href="#典型应用" class="headerlink" title="典型应用"></a><span style='color:red;background:背景颜色;font-size:文字大小;'>典型应用</span></h5><ul>
+<li><p>下边的解释设计到了四种引用类型的原理，未来需要拆分出来，单独作为一篇文章    </p>
+</li>
+<li><p><code>DirectByteBuffer</code>是Java用于实现堆外内存的一个重要类，<strong>通常用在通信过程中做缓冲池</strong>，如在Netty、MINA等NIO框架中应用广泛。<strong>DirectByteBuffer对于堆外内存的创建、使用、销毁等逻辑均由Unsafe提供的堆外内存API来实现</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> Unsafe unsafe = Bits.unsafe();</span><br><span class="line"></span><br><span class="line">DirectByteBuffer(<span class="keyword">int</span> cap) &#123;                   <span class="comment">// package-private</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">super</span>(-<span class="number">1</span>, <span class="number">0</span>, cap, cap);</span><br><span class="line">  <span class="keyword">boolean</span> pa = VM.isDirectMemoryPageAligned();</span><br><span class="line">  <span class="keyword">int</span> ps = Bits.pageSize();</span><br><span class="line">  <span class="keyword">long</span> size = Math.max(<span class="number">1L</span>, (<span class="keyword">long</span>)cap + (pa ? ps : <span class="number">0</span>));</span><br><span class="line">  Bits.reserveMemory(size, cap);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">long</span> base = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 分配内存，返回基地址</span></span><br><span class="line">    base = unsafe.allocateMemory(size);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (OutOfMemoryError x) &#123;</span><br><span class="line">    Bits.unreserveMemory(size, cap);</span><br><span class="line">    <span class="keyword">throw</span> x;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 内存初始化</span></span><br><span class="line">  unsafe.setMemory(base, size, (<span class="keyword">byte</span>) <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> (pa &amp;&amp; (base % ps != <span class="number">0</span>)) &#123;</span><br><span class="line">    <span class="comment">// Round up to page boundary</span></span><br><span class="line">    address = base + ps - (base &amp; (ps - <span class="number">1</span>));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    address = base;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 构建Cleaner对象用于跟踪DirectByteBuffer对象的垃圾回收，以实现当DirectByteBuffer被垃圾回收时，分配的堆外内存一起同步被释放</span></span><br><span class="line">  cleaner = Cleaner.create(<span class="keyword">this</span>, <span class="keyword">new</span> Deallocator(base, size, cap));</span><br><span class="line">  att = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>如何通过构建垃圾回收追踪对象Cleaner实现堆外内存释放的？—-虚引用的典型应用</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Cleaner继承虚引用</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Cleaner</span> <span class="keyword">extends</span> <span class="title">PhantomReference</span>&lt;<span class="title">Object</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 虚引用必须结合虚引用队列使用</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ReferenceQueue&lt;Object&gt; dummyQueue = <span class="keyword">new</span> ReferenceQueue();</span><br><span class="line"><span class="comment">// ....</span></span><br><span class="line">  </span><br><span class="line"><span class="comment">// DirectByteBuffer类初始化Cleaner类的语句</span></span><br><span class="line">cleaner = Cleaner.create(<span class="keyword">this</span>, <span class="keyword">new</span> Deallocator(base, size, cap));</span><br><span class="line"></span><br><span class="line"><span class="comment">// Cleaner类提供的初始化方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Cleaner <span class="title">create</span><span class="params">(Object var0, Runnable var1)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> var1 == <span class="keyword">null</span> ? <span class="keyword">null</span> : add(<span class="keyword">new</span> Cleaner(var0, var1));</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="comment">// var1是DirectByteBuffer的引用，var2是Deallocator实例</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">Cleaner</span><span class="params">(Object var1, Runnable var2)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 传递给虚引用的构造函数，至此，DirectByteBuffer拥有两个类型的引用，一个是调用DirectByteBuffer类的上层类中持有的强引用，一个是Cleaner中持有（本质上是被其父类的父类Reference持有）的虚引用</span></span><br><span class="line">  <span class="keyword">super</span>(var1, dummyQueue);</span><br><span class="line">  <span class="keyword">this</span>.thunk = var2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Cleaner内部维护了一个简单的链表</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Cleaner <span class="title">add</span><span class="params">(Cleaner var0)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (first != <span class="keyword">null</span>) &#123;</span><br><span class="line">    var0.next = first;</span><br><span class="line">    first.prev = var0;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  first = var0;</span><br><span class="line">  <span class="keyword">return</span> var0;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clean</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (remove(<span class="keyword">this</span>)) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.thunk.run();</span><br><span class="line">      &#125; <span class="keyword">catch</span> (<span class="keyword">final</span> Throwable var2) &#123;</span><br><span class="line">        AccessController.doPrivileged(<span class="keyword">new</span> PrivilegedAction&lt;Void&gt;() &#123;</span><br><span class="line">          <span class="function"><span class="keyword">public</span> Void <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (System.err != <span class="keyword">null</span>) &#123;</span><br><span class="line">              (<span class="keyword">new</span> Error(<span class="string">&quot;Cleaner terminated abnormally&quot;</span>, var2)).printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            System.exit(<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 执行堆外内存的回收的线程任务</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Deallocator</span></span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">Runnable</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> Unsafe unsafe = Unsafe.getUnsafe();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">long</span> address;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">long</span> size;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> capacity;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">Deallocator</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">long</span> size, <span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">assert</span> (address != <span class="number">0</span>);</span><br><span class="line">            <span class="keyword">this</span>.address = address;</span><br><span class="line">            <span class="keyword">this</span>.size = size;</span><br><span class="line">            <span class="keyword">this</span>.capacity = capacity;</span><br><span class="line">        &#125;</span><br><span class="line">				</span><br><span class="line">  			<span class="comment">// 在clean方法中被调用</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (address == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// Paranoia</span></span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 释放内存</span></span><br><span class="line">            unsafe.freeMemory(address);</span><br><span class="line">            address = <span class="number">0</span>;</span><br><span class="line">            Bits.unreserveMemory(size, capacity);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// Reference类</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        ThreadGroup tg = Thread.currentThread().getThreadGroup();</span><br><span class="line">        <span class="keyword">for</span> (ThreadGroup tgn = tg;</span><br><span class="line">             tgn != <span class="keyword">null</span>;</span><br><span class="line">             tg = tgn, tgn = tg.getParent());</span><br><span class="line">  </span><br><span class="line">  			<span class="comment">// 创建高优先级的Reference Handler线程</span></span><br><span class="line">        Thread handler = <span class="keyword">new</span> ReferenceHandler(tg, <span class="string">&quot;Reference Handler&quot;</span>);</span><br><span class="line">        <span class="comment">/* If there were a special system-only priority greater than</span></span><br><span class="line"><span class="comment">         * MAX_PRIORITY, it would be used here</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">  </span><br><span class="line">  			<span class="comment">// 最高优先级</span></span><br><span class="line">        handler.setPriority(Thread.MAX_PRIORITY);</span><br><span class="line">        <span class="comment">// 守护进线程</span></span><br><span class="line">        handler.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">        <span class="comment">// 线程启动</span></span><br><span class="line">        handler.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// provide access in SharedSecrets</span></span><br><span class="line">        SharedSecrets.setJavaLangRefAccess(<span class="keyword">new</span> JavaLangRefAccess() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryHandlePendingReference</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> tryHandlePending(<span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="comment">/* High-priority thread to enqueue pending References  高优先级的守护线程用来处理GC向pending列表中投入的已经不可达的引用</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferenceHandler</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ensureClassInitialized</span><span class="params">(Class&lt;?&gt; clazz)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Class.forName(clazz.getName(), <span class="keyword">true</span>, clazz.getClassLoader());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> (Error) <span class="keyword">new</span> NoClassDefFoundError(e.getMessage()).initCause(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">static</span> &#123;</span><br><span class="line">            <span class="comment">// pre-load and initialize InterruptedException and Cleaner classes</span></span><br><span class="line">            <span class="comment">// so that we don&#x27;t get into trouble later in the run loop if there&#x27;s</span></span><br><span class="line">            <span class="comment">// memory shortage while loading/initializing them lazily.</span></span><br><span class="line">            ensureClassInitialized(InterruptedException.class);</span><br><span class="line">            ensureClassInitialized(Cleaner.class);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ReferenceHandler(ThreadGroup g, String name) &#123;</span><br><span class="line">            <span class="keyword">super</span>(g, name);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                tryHandlePending(<span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 此属性承载着pending list中的下一个pending的reference，由JVM维护</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Reference&lt;Object&gt; pending = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 高优先级的引用处理线程会死循环的执行此方法</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">tryHandlePending</span><span class="params">(<span class="keyword">boolean</span> waitForNotify)</span> </span>&#123;</span><br><span class="line">        Reference&lt;Object&gt; r;</span><br><span class="line">        Cleaner c;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                <span class="keyword">if</span> (pending != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    r = pending;</span><br><span class="line">                    <span class="comment">// &#x27;instanceof&#x27; might throw OutOfMemoryError sometimes</span></span><br><span class="line">                    <span class="comment">// so do this before un-linking &#x27;r&#x27; from the &#x27;pending&#x27; chain...</span></span><br><span class="line">                    c = r <span class="keyword">instanceof</span> Cleaner ? (Cleaner) r : <span class="keyword">null</span>;</span><br><span class="line">                    <span class="comment">// unlink &#x27;r&#x27; from &#x27;pending&#x27; chain</span></span><br><span class="line">                    pending = r.discovered;</span><br><span class="line">                    r.discovered = <span class="keyword">null</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// The waiting on the lock may cause an OutOfMemoryError</span></span><br><span class="line">                    <span class="comment">// because it may try to allocate exception objects.</span></span><br><span class="line">                    <span class="keyword">if</span> (waitForNotify) &#123;</span><br><span class="line">                        <span class="comment">// 等待pending list有reference后被JVM唤醒</span></span><br><span class="line">                        lock.wait();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// retry if waited</span></span><br><span class="line">                    <span class="keyword">return</span> waitForNotify;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (OutOfMemoryError x) &#123;</span><br><span class="line">            <span class="comment">// Give other threads CPU time so they hopefully drop some live references</span></span><br><span class="line">            <span class="comment">// and GC reclaims some space.</span></span><br><span class="line">            <span class="comment">// Also prevent CPU intensive spinning in case &#x27;r instanceof Cleaner&#x27; above</span></span><br><span class="line">            <span class="comment">// persistently throws OOME for some time...</span></span><br><span class="line">            Thread.yield();</span><br><span class="line">            <span class="comment">// retry</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException x) &#123;</span><br><span class="line">            <span class="comment">// retry</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Fast path for cleaners</span></span><br><span class="line">        <span class="keyword">if</span> (c != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果当前处理的reference是Cleaner类型的则执行clean方法</span></span><br><span class="line">            c.clean();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">				</span><br><span class="line">  			<span class="comment">// 如果当前处理的reference不是Cleaner类型则加入到queue中</span></span><br><span class="line">        ReferenceQueue&lt;? <span class="keyword">super</span> Object&gt; q = r.queue;</span><br><span class="line">        <span class="keyword">if</span> (q != ReferenceQueue.NULL) q.enqueue(r);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Reference(T referent, ReferenceQueue&lt;? <span class="keyword">super</span> T&gt; queue) &#123;</span><br><span class="line">        <span class="keyword">this</span>.referent = referent;</span><br><span class="line">        <span class="keyword">this</span>.queue = (queue == <span class="keyword">null</span>) ? ReferenceQueue.NULL : queue;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 下边补充软引用与弱引用的实现，不详细分析其原理，仅仅做未来深入理解的准备</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SoftReference</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">Reference</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Timestamp clock, updated by the garbage collector</span></span><br><span class="line"><span class="comment">     由GC去更新时钟</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">private</span> <span class="keyword">long</span> clock;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Timestamp updated by each invocation of the get method.  The VM may use</span></span><br><span class="line"><span class="comment">     * this field when selecting soft references to be cleared, but it is not</span></span><br><span class="line"><span class="comment">     * required to do so.</span></span><br><span class="line"><span class="comment">     维护一个时间戳，类似于lru，每次调用get方法都会更新此时间戳，JVM可以以这个时间戳为凭证，判断内存不够时选择性的回收那些不常使用的弱引用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> timestamp;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a new soft reference that refers to the given object.  The new</span></span><br><span class="line"><span class="comment">     * reference is not registered with any queue.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> referent object the new soft reference will refer to</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SoftReference</span><span class="params">(T referent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(referent);</span><br><span class="line">        <span class="keyword">this</span>.timestamp = clock;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a new soft reference that refers to the given object and is</span></span><br><span class="line"><span class="comment">     * registered with the given queue.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> referent object the new soft reference will refer to</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> q the queue with which the reference is to be registered,</span></span><br><span class="line"><span class="comment">     *          or &lt;tt&gt;null&lt;/tt&gt; if registration is not required</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SoftReference</span><span class="params">(T referent, ReferenceQueue&lt;? <span class="keyword">super</span> T&gt; q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(referent, q);</span><br><span class="line">        <span class="keyword">this</span>.timestamp = clock;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns this reference object&#x27;s referent.  If this reference object has</span></span><br><span class="line"><span class="comment">     * been cleared, either by the program or by the garbage collector, then</span></span><br><span class="line"><span class="comment">     * this method returns &lt;code&gt;null&lt;/code&gt;.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span>   The object to which this reference refers, or</span></span><br><span class="line"><span class="comment">     *           &lt;code&gt;null&lt;/code&gt; if this reference object has been cleared</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        T o = <span class="keyword">super</span>.get();</span><br><span class="line">        <span class="keyword">if</span> (o != <span class="keyword">null</span> &amp;&amp; <span class="keyword">this</span>.timestamp != clock)</span><br><span class="line">            <span class="keyword">this</span>.timestamp = clock;</span><br><span class="line">        <span class="keyword">return</span> o;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 弱引用</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeakReference</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">Reference</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a new weak reference that refers to the given object.  The new</span></span><br><span class="line"><span class="comment">     * reference is not registered with any queue.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> referent object the new weak reference will refer to</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeakReference</span><span class="params">(T referent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(referent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a new weak reference that refers to the given object and is</span></span><br><span class="line"><span class="comment">     * registered with the given queue.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> referent object the new weak reference will refer to</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> q the queue with which the reference is to be registered,</span></span><br><span class="line"><span class="comment">     *          or &lt;tt&gt;null&lt;/tt&gt; if registration is not required</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeakReference</span><span class="params">(T referent, ReferenceQueue&lt;? <span class="keyword">super</span> T&gt; q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(referent, q);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>Cleaner继承自Java四大引用类型之一的虚引用PhantomReference（众所周知，无法通过虚引用获取与之关联的对象实例，且当对象仅被虚引用引用时，在任何发生GC的时候，其均可被回收），PhantomReference必须与引用队列ReferenceQueue结合使用，可以实现虚引用关联对象被垃圾回收时能够进行系统通知、资源清理等功能</strong></span></li>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'>当某个被Cleaner引用的对象（DirectByteBuffer）将被回收时（<strong>DirectByteBuffer的强引用已经无效，只剩下虚引用，这个虚引用的类型其实就是Cleaner(继承自PhantomReference)<strong>），JVM垃圾收集器会将此对象的引用放入到对象引用中的pending链表（不是dummyQueue，pending列表是GC或者说是JVM维护的，pending列表中的非Cleaner的引用才会放入到对应的引用队列中）中，等待Reference-Handler进行相关处理。其中，</strong>Reference-Handler为一个拥有最高优先级的守护线程，会循环不断的处理pending链表中的对象引用，执行Cleaner的clean方法进行相关清理工作</strong></span></li>
+</ul>
+<p><img src="http://images.demoli.xyz/image-20210522172947851.png" alt="image-20210522172947851"></p>
+<ul>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong><code>DirectByteBuffer</code>的唯一强引用失效后，其作为不可达对象剩下的唯一引用就是其对应的<code>Cleaner</code>类型的虚引用</strong></span></li>
+</ul>
+</li>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong><code>Reference</code>代码中包含的逻辑并非是四种引用的特性生效的全部逻辑，是需要JVM与GC配合使用的（逻辑不可见，只能从注释中瞥见一二），包括四种引用类型的子类的代码中也有对应的逻辑，大概的逻辑应该可以用下图去理解</strong></span></p>
+<p><img src="http://images.demoli.xyz/image-20210706201301955.png"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.processon.com/view/link/60e448ecf346fb2f722a7d31">图源参考</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="CAS相关"><a href="#CAS相关" class="headerlink" title="CAS相关"></a>CAS相关</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapObject</span><span class="params">(Object var1, <span class="keyword">long</span> var2, Object var4, Object var5)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4, <span class="keyword">int</span> var5)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapLong</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">long</span> var4, <span class="keyword">long</span> var6)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAddInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> var5;</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    var5 = <span class="keyword">this</span>.getIntVolatile(var1, var2);</span><br><span class="line">  &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapInt(var1, var2, var5, var5 + var4));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> var5;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">long</span> <span class="title">getAndAddLong</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">long</span> var4)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">long</span> var6;</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    var6 = <span class="keyword">this</span>.getLongVolatile(var1, var2);</span><br><span class="line">  &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapLong(var1, var2, var6, var6 + var4));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> var6;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndSetInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> var5;</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    var5 = <span class="keyword">this</span>.getIntVolatile(var1, var2);</span><br><span class="line">  &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapInt(var1, var2, var5, var4));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> var5;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">long</span> <span class="title">getAndSetLong</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">long</span> var4)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">long</span> var6;</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    var6 = <span class="keyword">this</span>.getLongVolatile(var1, var2);</span><br><span class="line">  &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapLong(var1, var2, var6, var4));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> var6;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title">getAndSetObject</span><span class="params">(Object var1, <span class="keyword">long</span> var2, Object var4)</span> </span>&#123;</span><br><span class="line">  Object var5;</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    var5 = <span class="keyword">this</span>.getObjectVolatile(var1, var2);</span><br><span class="line">  &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapObject(var1, var2, var5, var4));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> var5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>Unsafe提供了三个native的CAS方法，以及几个内部封装的<code>getAndSet</code>方法，其区别在于以下几点</strong></span><ul>
+<li><strong><code>getAndSet</code>方法提供了CAS自旋，而native方法是一次性执行的</strong></li>
+<li><strong>native方法参数中的“期望值”是调用方直接传入的，而<code>getAndSet</code>方法中的“期望值”是使用另外一组Unsafe native方法提供的即<code>对象相关的</code>native方法（<code>getIntVolatile</code>等等）</strong></li>
+</ul>
+</li>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><code>AtomicInteger</code>与<code>ConcurrentHashMap</code>、<code>FutureTask</code>以及<code>AQS</code>中都用到了Unsafe提供的CAS实现（几乎所有并发编程的类中都使用了CAS），对于<code>AtomicInteger</code>而言其封装方法中，既有对三个CAS <code>native</code>方法的直接调用，也有对<code>Unsafe</code>内部的<code>getAndSet</code>方法的调用</span></li>
+</ul>
+<h4 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 线程恢复</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">unpark</span><span class="params">(Object var1)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 线程挂起</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">park</span><span class="params">(<span class="keyword">boolean</span> var1, <span class="keyword">long</span> var2)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>关于Unsafe中线程调度的典型应用就是<code>LockSupport</code>类，<code>AQS</code>以及<code>ConcurrentHashMap</code>、<code>SychronousQueue</code>、<code>FutureTask</code>中实现线层挂起与唤醒使用的就是<code>LockSupport.park()</code>和<code>LockSupport.unpark()</code>，而LockSupport的park、unpark方法实际是调用Unsafe的park、unpark方式来实现</strong></span></li>
+</ul>
+<h4 id="Class相关"><a href="#Class相关" class="headerlink" title="Class相关"></a>Class相关</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取给定静态字段的内存偏移地址，此值对于给定的字段是唯一且固定不变的</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">staticFieldOffset</span><span class="params">(Field var1)</span></span>;</span><br><span class="line"><span class="comment">// 获取给定静态字段存储的对象指针</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title">staticFieldBase</span><span class="params">(Field var1)</span></span>;</span><br><span class="line"><span class="comment">// 判断是否需要初始化一个类，通常在获取一个类的静态属性的时候（因为一个类如果没初始化，它的静态属性也不会初始化）使用。 当且仅当ensureClassInitialized方法不生效时返回false。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">shouldBeInitialized</span><span class="params">(Class&lt;?&gt; var1)</span></span>;</span><br><span class="line"><span class="comment">//检测给定的类是否已经初始化。通常在获取一个类的静态属性的时候（因为一个类如果没初始化，它的静态属性也不会初始化）使用</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">ensureClassInitialized</span><span class="params">(Class&lt;?&gt; var1)</span></span>;</span><br><span class="line"><span class="comment">//定义一个类，此方法会跳过JVM的所有安全检查，默认情况下，ClassLoader（类加载器）和ProtectionDomain（保护域）实例来源于调用者</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Class&lt;?&gt; defineClass(String var1, <span class="keyword">byte</span>[] var2, <span class="keyword">int</span> var3, <span class="keyword">int</span> var4, ClassLoader var5, ProtectionDomain var6);</span><br><span class="line"><span class="comment">//定义一个匿名类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> Class&lt;?&gt; defineAnonymousClass(Class&lt;?&gt; var1, <span class="keyword">byte</span>[] var2, Object[] var3);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>从Java 8开始，JDK使用invokedynamic及VM Anonymous Class结合来实现Java语言层面上的Lambda表达式。</strong></span></p>
+<ul>
+<li><p><strong>invokedynamic</strong>： invokedynamic是Java 7为了实现在JVM上运行动态语言而引入的一条新的虚拟机指令，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>它可以实现在运行期动态解析出调用点限定符所引用的方法，然后再执行该方法，invokedynamic指令的分派逻辑是由用户设定的引导方法决定</strong></span></p>
+</li>
+<li><p><strong>VM Anonymous Class</strong>：<strong>可以看做是一种模板机制</strong>，针对于程序动态生成很多结构相同、仅若干常量不同的类时，可以先创建包含常量占位符的模板类，而后通过Unsafe.defineAnonymousClass方法定义具体类时填充模板的占位符生成具体的匿名类。生成的匿名类不显式挂在任何ClassLoader下面，<strong>只要当该类没有存在的实例对象、且没有强引用来引用该类的Class对象时，该类就会被GC回收</strong>。<strong>故而VM Anonymous Class相比于Java语言层面的匿名内部类无需通过ClassClassLoader进行类加载且更易回收</strong>。</p>
+</li>
+<li><p><span style='color:red;background:背景颜色;font-size:文字大小;'><strong>在Lambda表达式实现中，通过invokedynamic指令调用引导方法生成调用点，在此过程中，会通过ASM动态生成字节码，而后利用Unsafe的defineAnonymousClass方法定义实现相应的函数式接口的匿名类，然后再实例化此匿名类，并返回与此匿名类中函数式方法的方法句柄关联的调用点；而后可以通过此调用点实现调用相应Lambda表达式定义逻辑的功能</strong></span></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="对象相关"><a href="#对象相关" class="headerlink" title="对象相关"></a>对象相关</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回对象成员属性在内存地址相对于此对象的内存地址的偏移量</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">objectFieldOffset</span><span class="params">(Field var1)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 以下两个方法与内存操作中的两个同名方法是同一个</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获得给定对象的指定地址偏移量的值，与此类似操作还有：getInt，getDouble，getLong，getChar等</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title">getObject</span><span class="params">(Object o, <span class="keyword">long</span> offset)</span></span>;</span><br><span class="line"><span class="comment">//给定对象的指定地址偏移量设值，与此类似操作还有：putInt，putDouble，putLong，putChar等</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">putObject</span><span class="params">(Object o, <span class="keyword">long</span> offset, Object x)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//从对象的指定偏移量处获取变量的引用，使用volatile的加载语义，有其他类似操作</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title">getObjectVolatile</span><span class="params">(Object o, <span class="keyword">long</span> offset)</span></span>;</span><br><span class="line"><span class="comment">//存储变量的引用到对象的指定的偏移量处，使用volatile的存储语义，有其他类似操作</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">putObjectVolatile</span><span class="params">(Object o, <span class="keyword">long</span> offset, Object x)</span></span>;</span><br><span class="line"><span class="comment">//有序、延迟版本的putObjectVolatile方法，不保证值的改变被其他线程立即看到。只有在field被volatile修饰符修饰时有效，有其他类似操作</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">putOrderedObject</span><span class="params">(Object o, <span class="keyword">long</span> offset, Object x)</span></span>;</span><br><span class="line"><span class="comment">//绕过构造方法、初始化代码来创建对象</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> Object <span class="title">allocateInstance</span><span class="params">(Class&lt;?&gt; cls)</span> <span class="keyword">throws</span> InstantiationException</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>所谓的以<code>Volatile</code>的语义加载，意思应该就是获取该被<code>volatile</code>修饰的字段的最新的值</strong></span></li>
+<li><strong>关于<code>allocateInsatnce</code></strong><ul>
+<li><strong>常规对象实例化方式</strong>：我们通常所用到的创建对象的方式，从本质上来讲，都是通过new机制来实现对象的创建。但是，new机制有个特点就是当类只提供有参的构造函数且无显示声明无参构造函数时，则必须使用有参构造函数进行对象构造，而使用有参构造函数时，必须传递相应个数的参数才能完成对象实例化。</li>
+<li><strong>非常规的实例化方式</strong>：而Unsafe中提供allocateInstance方法，<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>仅通过Class对象就可以创建此类的实例对象，而且不需要调用其构造函数、初始化代码、JVM安全检查等。它抑制修饰符检测，也就是即使构造器是private修饰的也能通过此方法实例化，只需提类对象即可创建相应的对象</strong></span>。由于这种特性，allocateInstance在java.lang.invoke、Objenesis（提供绕过类构造器的对象生成方式）、Gson（反序列化时用到）中都有相应的应用<ul>
+<li><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>在Gson反序列化时，如果类有默认构造函数，则通过反射调用默认构造函数创建实例，否则通过UnsafeAllocator来实现对象实例的构造，UnsafeAllocator通过调用Unsafe的allocateInstance实现对象的实例化，保证在目标类无默认构造函数时，反序列化不够影响</strong></span></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="数组相关"><a href="#数组相关" class="headerlink" title="数组相关"></a>数组相关</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回数组中第一个元素的偏移地址public native int arrayBaseOffset(Class&lt;?&gt; var1);//返回数组中一个元素占用的大小public native int arrayIndexScale(Class&lt;?&gt; var1);</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>实际上获取一个数组实例的以上两个要素后，就能对数组中任一个索引的内存地址进行定位，最典型的应用就是<code>Atomic</code>的数组类中，比如<code>AtomicIntegerArray</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AtomicIntegerArray 类private static final int base = unsafe.arrayBaseOffset(int[].class);static &#123;  int scale = unsafe.arrayIndexScale(int[].class);  if ((scale &amp; (scale - 1)) != 0)    throw new Error(&quot;data type scale not a power of two&quot;);  shift = 31 - Integer.numberOfLeadingZeros(scale);&#125;private long checkedByteOffset(int i) &#123;  if (i &lt; 0 || i &gt;= array.length)    throw new IndexOutOfBoundsException(&quot;index &quot; + i);  return byteOffset(i);&#125;// 给定索引返回该索引对应的内存地址private static long byteOffset(int i) &#123;  return ((long) i &lt;&lt; shift) + base;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>关于数组相关的部分，需要注意的是计算的都是偏移地址</strong></li>
+</ul>
+</li>
+</ul>
+<h4 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//内存屏障，禁止load操作重排序。屏障前的load操作不能被重排序到屏障后，屏障后的load操作不能被重排序到屏障前public native void loadFence();//内存屏障，禁止store操作重排序。屏障前的store操作不能被重排序到屏障后，屏障后的store操作不能被重排序到屏障前public native void storeFence();//内存屏障，禁止load、store操作重排序public native void fullFence();</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>在Java 8中引入，用于定义内存屏障（也称内存栅栏，内存栅障，屏障指令等，是一类同步屏障指令，是CPU或编译器在对内存随机访问的操作中的一个同步点，使得此点之前的所有读写操作都执行后才可以开始执行此点之后的操作），避免代码重排序</p>
+</li>
+<li><p><span style='color:blue;background:背景颜色;font-size:文字大小;'><strong>同样的概念也出现在<code>synchronized</code>与<code>volatile</code>两个关键字得以实现可见性以及有序性的原理中</strong></span></p>
+</li>
+<li><p>在Java 8中引入的读写锁的实现——<code>StampedLock</code>，它可以看成是读写锁的一个改进版本。<strong>StampedLock提供了一种乐观读锁的实现（写锁仍然是独占的）</strong>，这种乐观读锁类似于无锁的操作，完全不会阻塞写线程获取写锁，从而缓解读多写少时写线程“饥饿”现象。<strong>由于StampedLock提供的乐观读锁不阻塞写线程获取读锁，当线程共享变量从主内存load到线程工作内存时，会存在数据不一致问题（<span style='color:red;background:背景颜色;font-size:文字大小;'>这种不一致的场景还是比较容易想出来的：读线程加载数据到自己的工作内存以进行计算，但是随后写线程同样加载数据，并对数据进行修改，此时则出现了数据不一致，虽然都是可见性问题，但是这里的问题是代码块锁的问题不是<code>volatile</code>这样的针对一个变量的问题，不要混淆（换句话说，下边的代码可能把x,y用volatile修饰可以解决部分问题，但是限制会比较多–volatile仅仅保证一个变量的读写指令的可见性）</span>），所以当使用StampedLock的乐观读锁时，需要遵从如下图用例中使用的模式来确保数据的一致性</strong></p>
+<p><img src="http://images.demoli.xyz/image-20210524190429484.png" alt="image-20210524190429484"></p>
+<ul>
+<li><p>如上图用例所示计算坐标点Point对象，包含点移动方法move及计算此点到原点的距离的方法distanceFromOrigin。在方法distanceFromOrigin中，首先，通过tryOptimisticRead方法获取乐观读标记；然后从主内存中加载点的坐标值 (x,y)；而后通过StampedLock的validate方法校验锁状态，<strong>判断坐标点(x,y)从主内存加载到线程工作内存过程中（<span style='color:blue;background:背景颜色;font-size:文字大小;'>那么判断完毕之后的过程中，如果出现写线程更新怎么办，总不能一直判断吧，解释在下边</span>），主内存的值是否已被其他线程通过move方法修改，如果validate返回值为true，证明(x, y)的值未被修改，可参与后续计算</strong>；否则，需加悲观读锁（<strong>获取悲观读锁后，不允许写线程再获取锁</strong>），<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>再次从主内存加载(x,y)的最新值，然后再进行距离计算。其中，校验锁状态这步操作至关重要，需要判断锁状态是否发生改变，从而判断之前copy到线程工作内存中的值是否与主内存的值存在不一致</strong></span></p>
+<ul>
+<li>这里就忽视了锁的使命是什么了，锁的作用是为了保证并发过程中逻辑的完整性（原子性），不要在数据处理过程中，将旧的数据与新的数据混淆计算，造成状态的混乱；<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>保证从 <code>tryOptimisticRead</code> 到 <code>validate</code> 之间的代码执行的逻辑完整性（比如不会出现这样的状况，读了x后，对应的y状态被更新，此时x与y就不是匹配的一对坐标），不保证 validate 之后的写入，那个跟你这次读已经无关了</strong></span></li>
+</ul>
+</li>
+<li><p>在validate方法中，通过锁标记与相关常量进行位运算、比较来校验锁状态，在校验逻辑之前，会通过Unsafe的loadFence方法加入一个load内存屏障，目的是避免上图用例中步骤②和StampedLock.validate中锁状态校验运算发生重排序导致锁状态校验不准确的问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">validate</span><span class="params">(<span class="keyword">long</span> stamp)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// load内存屏障，避免屏障前边的读操作与后边的读操作重排序，其实理解还是不深</span></span><br><span class="line">  U.loadFence();</span><br><span class="line">  <span class="keyword">return</span> (stamp &amp; SBITS) == (state &amp; SBITS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h4 id="系统相关"><a href="#系统相关" class="headerlink" title="系统相关"></a>系统相关</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回系统指针的大小。返回值为4（32位系统）或 8（64位系统）。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">addressSize</span><span class="params">()</span></span>;  </span><br><span class="line"><span class="comment">//内存页的大小，此值为2的幂次方。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">pageSize</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>java.nio下的工具类Bits中<span style='color:red;background:背景颜色;font-size:文字大小;'><strong>计算待申请内存所需内存页数量</strong></span>的静态方法，其依赖于Unsafe中pageSize方法获取系统内存页大小实现后续计算逻辑(<strong>前边说的<code>DirectByteBuffer</code>也使用了此方法</strong>)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">pageSize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (pageSize == -<span class="number">1</span>)</span><br><span class="line">    pageSize = unsafe().pageSize();</span><br><span class="line">  <span class="keyword">return</span> pageSize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/02/14/talk-about-java-magic-class-unsafe.html">Java魔法类：Unsafe应用解析</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java%E5%9F%BA%E7%A1%80/" rel="tag"># Java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/14/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%86%E6%9E%90/" rel="prev" title="线程池分析">
+      <i class="fa fa-chevron-left"></i> 线程池分析
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsafe%E7%B1%BB%E8%A7%A3%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">Unsafe类解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsafe%E7%B1%BB%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">Unsafe类实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsafe%E7%B1%BB%E7%9A%84%E5%8A%9F%E8%83%BD%E6%A6%82%E8%A7%88"><span class="nav-number">1.3.</span> <span class="nav-text">Unsafe类的功能概览</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%93%8D%E4%BD%9C%EF%BC%88%E4%B8%BB%E8%A6%81%E6%98%AF%E5%AF%B9%E5%A0%86%E5%A4%96%E5%86%85%E5%AD%98%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">内存操作（主要是对堆外内存的操作）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">典型应用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CAS%E7%9B%B8%E5%85%B3"><span class="nav-number">1.3.2.</span> <span class="nav-text">CAS相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">1.3.3.</span> <span class="nav-text">线程调度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Class%E7%9B%B8%E5%85%B3"><span class="nav-number">1.3.4.</span> <span class="nav-text">Class相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E7%9B%B8%E5%85%B3"><span class="nav-number">1.3.5.</span> <span class="nav-text">对象相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E7%9B%B8%E5%85%B3"><span class="nav-number">1.3.6.</span> <span class="nav-text">数组相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="nav-number">1.3.7.</span> <span class="nav-text">内存屏障</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3"><span class="nav-number">1.3.8.</span> <span class="nav-text">系统相关</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lee</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
